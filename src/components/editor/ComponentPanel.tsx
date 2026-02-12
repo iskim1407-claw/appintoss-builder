@@ -2,19 +2,34 @@
 
 import { useEditor } from "@craftjs/core";
 import React, { useState, useCallback } from "react";
+// TDS Core Components
 import { TextComponent } from "../user/TextComponent";
 import { ButtonComponent } from "../user/ButtonComponent";
+import { BadgeComponent } from "../user/BadgeComponent";
+import { NavigationComponent } from "../user/NavigationComponent";
+import { ListRowComponent } from "../user/ListRowComponent";
+import { TabComponent } from "../user/TabComponent";
+import { TabBarComponent } from "../user/TabBarComponent";
+// TDS Form Components
+import { TextFieldComponent } from "../user/TextFieldComponent";
+import { SwitchComponent } from "../user/SwitchComponent";
+import { CheckboxComponent } from "../user/CheckboxComponent";
+// TDS Feedback Components
+import { ProgressBarComponent } from "../user/ProgressBarComponent";
+import { ToastComponent } from "../user/ToastComponent";
+import { SkeletonComponent } from "../user/SkeletonComponent";
+import { DialogComponent } from "../user/DialogComponent";
+// TDS Layout Components
+import { BottomCTAComponent } from "../user/BottomCTAComponent";
+import { BottomSheetComponent } from "../user/BottomSheetComponent";
+// Basic Components
 import { ImageComponent } from "../user/ImageComponent";
 import { CardComponent } from "../user/CardComponent";
 import { ListComponent } from "../user/ListComponent";
 import { DividerComponent } from "../user/DividerComponent";
 import { HeaderComponent } from "../user/HeaderComponent";
 import { InputComponent } from "../user/InputComponent";
-import { BottomSheetComponent } from "../user/BottomSheetComponent";
-import { TabBarComponent } from "../user/TabBarComponent";
-import { BadgeComponent } from "../user/BadgeComponent";
 import { CarouselComponent } from "../user/CarouselComponent";
-import { ProgressBarComponent } from "../user/ProgressBarComponent";
 import { SpacerComponent } from "../user/SpacerComponent";
 // 핀테크 컴포넌트
 import { PaymentComponent } from "../user/PaymentComponent";
@@ -41,34 +56,45 @@ interface ComponentInfo {
   component: CraftComponent;
   category: string;
   defaultProps: Record<string, unknown>;
+  tds?: boolean; // TDS component flag
 }
 
 const components: ComponentInfo[] = [
-  // 기본
+  // === TDS 핵심 컴포넌트 ===
+  { name: "네비게이션", icon: "🧭", component: NavigationComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "버튼", icon: "🔘", component: ButtonComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "텍스트", icon: "✏️", component: TextComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "뱃지", icon: "🏷️", component: BadgeComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "리스트 항목", icon: "📋", component: ListRowComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "탭", icon: "📑", component: TabComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  { name: "탭바", icon: "📱", component: TabBarComponent, category: "TDS 핵심", defaultProps: {}, tds: true },
+  
+  // === TDS 입력 ===
+  { name: "입력 필드", icon: "⌨️", component: TextFieldComponent, category: "TDS 입력", defaultProps: {}, tds: true },
+  { name: "스위치", icon: "🔀", component: SwitchComponent, category: "TDS 입력", defaultProps: {}, tds: true },
+  { name: "체크박스", icon: "☑️", component: CheckboxComponent, category: "TDS 입력", defaultProps: {}, tds: true },
+  
+  // === TDS 피드백 ===
+  { name: "진행바", icon: "📊", component: ProgressBarComponent, category: "TDS 피드백", defaultProps: {}, tds: true },
+  { name: "토스트", icon: "💬", component: ToastComponent, category: "TDS 피드백", defaultProps: {}, tds: true },
+  { name: "스켈레톤", icon: "💀", component: SkeletonComponent, category: "TDS 피드백", defaultProps: {}, tds: true },
+  { name: "다이얼로그", icon: "🗨️", component: DialogComponent, category: "TDS 피드백", defaultProps: {}, tds: true },
+  
+  // === TDS 레이아웃 ===
+  { name: "하단 CTA", icon: "⬇️", component: BottomCTAComponent, category: "TDS 레이아웃", defaultProps: {}, tds: true },
+  { name: "바텀시트", icon: "📄", component: BottomSheetComponent, category: "TDS 레이아웃", defaultProps: {}, tds: true },
+  
+  // === 기본 ===
   { name: "헤더", icon: "📝", component: HeaderComponent, category: "기본", defaultProps: { text: "헤더 텍스트", level: "h2" } },
-  { name: "텍스트", icon: "✏️", component: TextComponent, category: "기본", defaultProps: { text: "텍스트를 입력하세요", fontSize: 16, fontWeight: "normal", color: "#191F28", textAlign: "left" } },
-  { name: "버튼", icon: "🔘", component: ButtonComponent, category: "기본", defaultProps: { text: "버튼", bgColor: "#3182F6", textColor: "#FFFFFF", size: "md", fullWidth: true, action: "none", actionValue: "", borderRadius: 12 } },
   { name: "이미지", icon: "🖼️", component: ImageComponent, category: "기본", defaultProps: {} },
+  { name: "카드", icon: "🃏", component: CardComponent, category: "기본", defaultProps: {} },
+  { name: "리스트", icon: "📃", component: ListComponent, category: "기본", defaultProps: {} },
   { name: "구분선", icon: "➖", component: DividerComponent, category: "기본", defaultProps: {} },
   { name: "여백", icon: "↕️", component: SpacerComponent, category: "기본", defaultProps: {} },
+  { name: "캐러셀", icon: "🎠", component: CarouselComponent, category: "기본", defaultProps: {} },
+  { name: "입력 (기본)", icon: "📥", component: InputComponent, category: "기본", defaultProps: {} },
   
-  // 레이아웃
-  { name: "카드", icon: "🃏", component: CardComponent, category: "레이아웃", defaultProps: {} },
-  { name: "리스트", icon: "📋", component: ListComponent, category: "레이아웃", defaultProps: {} },
-  { name: "캐러셀", icon: "🎠", component: CarouselComponent, category: "레이아웃", defaultProps: {} },
-  
-  // 입력
-  { name: "입력 필드", icon: "⌨️", component: InputComponent, category: "입력", defaultProps: {} },
-  
-  // 네비게이션
-  { name: "탭바", icon: "📱", component: TabBarComponent, category: "네비게이션", defaultProps: {} },
-  { name: "바텀시트", icon: "📄", component: BottomSheetComponent, category: "네비게이션", defaultProps: {} },
-  
-  // 피드백
-  { name: "뱃지", icon: "🔴", component: BadgeComponent, category: "피드백", defaultProps: {} },
-  { name: "진행바", icon: "📊", component: ProgressBarComponent, category: "피드백", defaultProps: {} },
-  
-  // 핀테크
+  // === 핀테크 ===
   { name: "결제/송금", icon: "💳", component: PaymentComponent, category: "핀테크", defaultProps: {} },
   { name: "계좌 연결", icon: "🏦", component: AccountComponent, category: "핀테크", defaultProps: {} },
   { name: "신용점수", icon: "📈", component: CreditScoreComponent, category: "핀테크", defaultProps: {} },
@@ -76,7 +102,7 @@ const components: ComponentInfo[] = [
   { name: "거래내역", icon: "📑", component: TransactionListComponent, category: "핀테크", defaultProps: {} },
 ];
 
-const categories = ["전체", "기본", "레이아웃", "입력", "네비게이션", "피드백", "핀테크"];
+const categories = ["전체", "TDS 핵심", "TDS 입력", "TDS 피드백", "TDS 레이아웃", "기본", "핀테크"];
 
 interface ComponentPanelProps {
   isMobile?: boolean;
@@ -168,10 +194,17 @@ export const ComponentPanel = ({ isMobile = false, onComponentAdded }: Component
               <button
                 key={c.name}
                 onClick={() => handleAddComponent(c)}
-                className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-gray-100 active:bg-blue-50 active:border-[#3182F6] transition text-center"
+                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border active:bg-blue-50 active:border-[#3182F6] transition text-center ${
+                  c.tds ? "border-blue-100 bg-blue-50/30" : "border-gray-100"
+                }`}
               >
                 <span className="text-3xl">{c.icon}</span>
                 <span className="text-sm text-gray-700 font-medium">{c.name}</span>
+                {c.tds && (
+                  <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded-full font-medium">
+                    TDS
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -247,10 +280,17 @@ export const ComponentPanel = ({ isMobile = false, onComponentAdded }: Component
                   }
                 }}
                 onClick={() => handleAddComponent(c)}
-                className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 cursor-grab hover:border-[#3182F6] hover:bg-blue-50 hover:shadow-sm transition text-center group active:scale-95"
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border cursor-grab hover:border-[#3182F6] hover:bg-blue-50 hover:shadow-sm transition text-center group active:scale-95 ${
+                  c.tds ? "border-blue-100 bg-blue-50/30" : "border-gray-100"
+                }`}
               >
                 <span className="text-2xl group-hover:scale-110 transition">{c.icon}</span>
                 <span className="text-xs text-gray-600 font-medium">{c.name}</span>
+                {c.tds && (
+                  <span className="text-[9px] px-1 py-0.5 bg-blue-100 text-blue-600 rounded font-medium">
+                    TDS
+                  </span>
+                )}
               </div>
             );
           })}

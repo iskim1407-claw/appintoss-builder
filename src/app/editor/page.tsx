@@ -105,7 +105,7 @@ export default function EditorPage() {
                   <Frame>
                     <Element is={Canvas} canvas>
                       <HeaderComponent text="환영합니다! 👋" level="h2" />
-                      <TextComponent text="컴포넌트를 드래그하거나 클릭해서 추가하세요." fontSize={14} color="#8B95A1" />
+                      <TextComponent text="컴포넌트를 드래그하거나 클릭해서 추가하세요." variant="t6" color="secondary" />
                     </Element>
                   </Frame>
                 </div>
