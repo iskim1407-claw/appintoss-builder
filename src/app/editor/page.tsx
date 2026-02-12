@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Editor, Frame, Element, useEditor } from "@craftjs/core";
 import { polyfill } from "mobile-drag-drop";
 import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
@@ -42,16 +42,40 @@ import { ProductCompareComponent } from "@/components/user/ProductCompareCompone
 import { TransactionListComponent } from "@/components/user/TransactionListComponent";
 
 const LoadTemplate = () => {
-  const { actions } = useEditor();
+  const { actions, query } = useEditor();
   useEffect(() => {
     if (typeof window !== "undefined") {
       const template = sessionStorage.getItem("appintoss-template");
       if (template) {
         sessionStorage.removeItem("appintoss-template");
-        try { actions.deserialize(template); } catch (e) { console.error("Failed to load template", e); }
+        try {
+          const parsed = JSON.parse(template);
+          const rootNode = parsed["ROOT"];
+          if (!rootNode || !rootNode.nodes) return;
+          // 기존 노드 모두 삭제
+          try {
+            const currentRoot = query.node("ROOT").get();
+            const existingNodes = currentRoot?.data?.nodes || [];
+            existingNodes.forEach((nid: string) => { try { actions.delete(nid); } catch {} });
+          } catch {}
+          // 새 노드 추가 (addNodeTree 대신 직접 createElement 방식)
+          rootNode.nodes.forEach((nodeId: string) => {
+            const node = parsed[nodeId];
+            if (!node) return;
+            const compName = node.type?.resolvedName;
+            const compRef = (resolver as Record<string, unknown>)[compName];
+            if (!compRef) { console.warn("Unknown component:", compName); return; }
+            try {
+              const freshNode = query.createNode(
+                React.createElement(compRef as React.ComponentType, node.props || {})
+              );
+              actions.add(freshNode, "ROOT");
+            } catch (e) { console.error("Failed to add node:", compName, e); }
+          });
+        } catch (e) { console.error("Failed to load template", e); }
       }
     }
-  }, [actions]);
+  }, [actions, query]);
   return null;
 };
 
@@ -116,6 +140,34 @@ export default function EditorPage() {
   const [tossMode, setTossMode] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("canvas");
 
+  // 폰 프레임 드래그 이동
+  const [framePos, setFramePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, fx: 0, fy: 0 });
+
+  const handleFrameMouseDown = (e: React.MouseEvent) => {
+    // 프레임 상단 바(베젤) 영역에서만 드래그 시작
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-craft-node]') || target.closest('.craft-renderer')) return;
+    e.preventDefault();
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX, y: e.clientY, fx: framePos.x, fy: framePos.y };
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e: MouseEvent) => {
+      setFramePos({
+        x: dragStart.current.fx + (e.clientX - dragStart.current.x),
+        y: dragStart.current.fy + (e.clientY - dragStart.current.y),
+      });
+    };
+    const onUp = () => setIsDragging(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [isDragging]);
+
   // 모바일 터치 드래그 폴리필
   useEffect(() => {
     polyfill({
@@ -138,7 +190,7 @@ export default function EditorPage() {
           {/* Left Panel: Desktop always visible, Mobile only when tab selected */}
           <div className={`
             md:block md:w-64 md:relative md:z-auto
-            ${mobileTab === "components" ? "block absolute inset-0 z-20 w-full" : "hidden"}
+            ${mobileTab === "components" ? "block absolute inset-0 z-20 w-full overflow-y-auto" : "hidden"}
           `}>
             <ComponentPanel isMobile={mobileTab === "components"} onComponentAdded={() => setMobileTab("canvas")} />
           </div>
@@ -149,8 +201,17 @@ export default function EditorPage() {
             md:flex md:items-start md:justify-center md:p-8 md:bg-[#f0f2f5]
             ${mobileTab !== "canvas" ? "hidden md:flex" : "flex flex-col"}
           `}>
-            {/* Desktop phone frame wrapper */}
-            <div className="hidden md:block transition-all duration-300" style={{ width: viewportWidth }}>
+            {/* Desktop phone frame wrapper — 드래그로 이동 가능 */}
+            <div
+              className="hidden md:block transition-none"
+              style={{
+                width: viewportWidth,
+                transform: `translate(${framePos.x}px, ${framePos.y}px)`,
+                cursor: isDragging ? 'grabbing' : 'grab',
+                userSelect: isDragging ? 'none' : 'auto',
+              }}
+              onMouseDown={handleFrameMouseDown}
+            >
               <div className="bg-gray-800 rounded-t-[2rem] pt-2 px-2">
                 <div className={`rounded-t-[1.5rem] overflow-hidden ${darkMode ? "bg-gray-900" : "bg-white"}`}>
                   <div className={`h-11 flex items-center justify-between px-6 text-xs ${darkMode ? "text-white" : ""}`}>
@@ -192,7 +253,7 @@ export default function EditorPage() {
           {/* Right Panel: Settings */}
           <div className={`
             md:block md:w-72 md:relative md:z-auto
-            ${mobileTab === "settings" ? "block absolute inset-0 z-20 w-full" : "hidden"}
+            ${mobileTab === "settings" ? "block absolute inset-0 z-20 w-full overflow-y-auto" : "hidden"}
           `}>
             <SettingsPanelComponent isMobile={mobileTab === "settings"} />
           </div>
@@ -223,17 +284,25 @@ export default function EditorPage() {
 
 // Mobile canvas view — reads editor state and renders a simple preview
 function MobileCanvasView() {
-  const { query } = useEditor();
+  const { query, actions } = useEditor();
   const [nodes, setNodes] = useState<string>("{}");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // 터치 드래그 정렬 상태
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragY, setDragY] = useState(0);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dropTarget, setDropTarget] = useState<number | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const itemRects = useRef<Map<string, DOMRect>>(new Map());
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Subscribe to editor changes
     const interval = setInterval(() => {
       try {
         const s = query.serialize();
         if (s && s !== "{}") setNodes(s);
       } catch (e) { console.warn("serialize error:", e); }
-    }, 1000);
+    }, 500);
     return () => clearInterval(interval);
   }, [query]);
 
@@ -253,11 +322,170 @@ function MobileCanvasView() {
     );
   }
 
+  const siblings = rootNode.nodes as string[];
+  const selectedIndex = selectedId ? siblings.indexOf(selectedId) : -1;
+
+  // 위치 저장 (각 아이템의 DOM rect)
+  const captureRects = () => {
+    if (!containerRef.current) return;
+    const items = containerRef.current.querySelectorAll('[data-node-id]');
+    itemRects.current.clear();
+    items.forEach(el => {
+      const id = (el as HTMLElement).dataset.nodeId;
+      if (id) itemRects.current.set(id, el.getBoundingClientRect());
+    });
+  };
+
+  // 롱프레스 → 드래그 시작
+  const handleTouchStart = (nodeId: string, e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const startY = touch.clientY;
+    longPressTimer.current = setTimeout(() => {
+      captureRects();
+      setDragId(nodeId);
+      setDragStartY(startY);
+      setDragY(0);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 350);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // 롱프레스 대기 중이면 취소 (약간의 움직임은 허용)
+    if (longPressTimer.current && !dragId) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+      return;
+    }
+    if (!dragId) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const dy = touch.clientY - dragStartY;
+    setDragY(dy);
+
+    // 드롭 타겟 계산
+    const currentY = touch.clientY;
+    let newTarget: number | null = null;
+    const dragIdx = siblings.indexOf(dragId);
+    siblings.forEach((nid, idx) => {
+      if (nid === dragId) return;
+      const rect = itemRects.current.get(nid);
+      if (!rect) return;
+      const mid = rect.top + rect.height / 2;
+      if (idx < dragIdx && currentY < mid) {
+        if (newTarget === null || idx < newTarget) newTarget = idx;
+      } else if (idx > dragIdx && currentY > mid) {
+        newTarget = idx;
+      }
+    });
+    setDropTarget(newTarget);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null; }
+    if (dragId && dropTarget !== null) {
+      const fromIdx = siblings.indexOf(dragId);
+      try {
+        // Craft.js move: 뒤로 이동 시 +1 보정
+        const insertIdx = dropTarget > fromIdx ? dropTarget + 1 : dropTarget;
+        actions.move(dragId, "ROOT", insertIdx);
+      } catch (e) { console.error(e); }
+    }
+    setDragId(null);
+    setDragY(0);
+    setDropTarget(null);
+  };
+
+  const handleDuplicate = () => {
+    if (!selectedId) return;
+    try {
+      const nodeTree = query.node(selectedId).toNodeTree();
+      actions.addNodeTree(nodeTree, "ROOT", selectedIndex + 1);
+    } catch (e) { console.error(e); }
+  };
+  const handleDelete = () => {
+    if (!selectedId) return;
+    try { actions.delete(selectedId); setSelectedId(null); } catch (e) { console.error(e); }
+  };
+  const handleMoveUp = () => {
+    if (!selectedId || selectedIndex <= 0) return;
+    try { actions.move(selectedId, "ROOT", selectedIndex - 1); } catch (e) { console.error(e); }
+  };
+  const handleMoveDown = () => {
+    if (!selectedId || selectedIndex >= siblings.length - 1) return;
+    try { actions.move(selectedId, "ROOT", selectedIndex + 2); } catch (e) { console.error(e); }
+  };
+
+  const handleTap = (nodeId: string) => {
+    if (dragId) return; // 드래그 중 무시
+    setSelectedId(selectedId === nodeId ? null : nodeId);
+    try { actions.selectNode(nodeId); } catch {}
+  };
+
   return (
-    <div className="space-y-2">
-      {rootNode.nodes.map((nodeId: string) => (
-        <MobileNodeRenderer key={nodeId} nodeId={nodeId} nodes={parsed} />
-      ))}
+    <div className="pb-20" ref={containerRef} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+      {siblings.map((nodeId: string, idx: number) => {
+        const isDragging = dragId === nodeId;
+        const isDropBefore = dropTarget !== null && dropTarget === idx && siblings.indexOf(dragId!) > idx;
+        const isDropAfter = dropTarget !== null && dropTarget === idx && siblings.indexOf(dragId!) < idx;
+        return (
+          <React.Fragment key={nodeId}>
+            {isDropBefore && <div className="h-1 bg-[#3182F6] rounded-full mx-4 my-1" />}
+            <div
+              data-node-id={nodeId}
+              onClick={() => handleTap(nodeId)}
+              onTouchStart={(e) => handleTouchStart(nodeId, e)}
+              className={`relative rounded-lg transition-all ${
+                selectedId === nodeId ? "ring-2 ring-[#3182F6] bg-blue-50/50" : ""
+              } ${isDragging ? "opacity-80 scale-[1.02] shadow-xl z-50" : ""}`}
+              style={isDragging ? { transform: `translateY(${dragY}px) scale(1.02)`, transition: 'none', zIndex: 50, position: 'relative' } : undefined}
+            >
+              <MobileNodeRenderer nodeId={nodeId} nodes={parsed} />
+              {selectedId === nodeId && !dragId && (
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#3182F6] rounded-full flex items-center justify-center">
+                  <span className="text-white text-[10px]">✓</span>
+                </div>
+              )}
+              {isDragging && (
+                <div className="absolute inset-0 border-2 border-[#3182F6] rounded-lg bg-blue-500/5 pointer-events-none" />
+              )}
+            </div>
+            {isDropAfter && <div className="h-1 bg-[#3182F6] rounded-full mx-4 my-1" />}
+          </React.Fragment>
+        );
+      })}
+
+      {/* 드래그 중 안내 */}
+      {dragId && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs px-4 py-2 rounded-full">
+          ☝️ 드래그해서 위치 이동 — 손 떼면 확정
+        </div>
+      )}
+
+      {/* 선택 시 하단 조작 바 (드래그 중 아닐 때) */}
+      {selectedId && !dragId && (
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-50">
+          <div className="flex items-center gap-1 bg-gray-900 text-white rounded-2xl px-2 py-2 shadow-2xl" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+            <span className="text-xs px-2 text-gray-400 max-w-[80px] truncate">
+              {parsed[selectedId]?.type?.resolvedName?.replace("Component","") || "?"}
+            </span>
+            <div className="w-px h-6 bg-gray-700" />
+            <button onClick={handleMoveUp} disabled={selectedIndex <= 0} className="px-3 py-2 rounded-xl active:bg-gray-700 disabled:opacity-30 text-sm font-medium">↑</button>
+            <button onClick={handleMoveDown} disabled={selectedIndex >= siblings.length - 1} className="px-3 py-2 rounded-xl active:bg-gray-700 disabled:opacity-30 text-sm font-medium">↓</button>
+            <div className="w-px h-6 bg-gray-700" />
+            <button onClick={handleDuplicate} className="px-3 py-2 rounded-xl active:bg-gray-700 text-sm">📋</button>
+            <button onClick={handleDelete} className="px-3 py-2 rounded-xl active:bg-red-600 text-sm">🗑️</button>
+            <div className="w-px h-6 bg-gray-700" />
+            <button onClick={() => setSelectedId(null)} className="px-3 py-2 rounded-xl active:bg-gray-700 text-sm">✕</button>
+          </div>
+        </div>
+      )}
+
+      {/* 꾹 누르기 힌트 */}
+      {!selectedId && !dragId && siblings.length > 1 && (
+        <div className="text-center text-xs text-gray-400 mt-4 pb-2">
+          💡 탭 = 선택 · 꾹 누르기 = 드래그 이동
+        </div>
+      )}
     </div>
   );
 }

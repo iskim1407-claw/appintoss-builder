@@ -4,6 +4,7 @@ import { useEditor } from "@craftjs/core";
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { generateHTML } from "@/lib/htmlGenerator";
+import { generateAitProject } from "@/lib/aitExportGenerator";
 
 interface ViewportSize {
   name: string;
@@ -35,8 +36,10 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
 
   const [showPreview, setShowPreview] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [showViewport, setShowViewport] = useState(false);
   const [projectName, setProjectName] = useState("내 미니앱");
+  const [lastExportType, setLastExportType] = useState<'html' | 'sdk'>('html');
 
   // Load project name from localStorage
   useEffect(() => {
@@ -74,51 +77,46 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     }
   }, [actions]);
 
-  const handleExport = useCallback(async () => {
+  const handleExportHTML = useCallback(async () => {
     const json = query.serialize();
-    const html = generateHTML(json, { 
-      darkMode, 
-      projectName,
-      tossMode 
-    });
+    const html = generateHTML(json, { darkMode, projectName, tossMode });
 
     const JSZip = (await import("jszip")).default;
     const { saveAs } = await import("file-saver");
 
     const zip = new JSZip();
     zip.file("index.html", html);
-    zip.file("README.md", `# ${projectName}
-
-이 파일을 앱인토스 콘솔에 업로드하세요.
-
-## 📦 포함된 파일
-- \`index.html\` - 미니앱 메인 파일
-
-## 🚀 업로드 방법
-1. [앱인토스 콘솔](https://apps-in-toss.toss.im) 접속
-2. '새 앱 만들기' 클릭
-3. '파일 업로드' 선택
-4. 이 ZIP 파일 업로드
-5. 앱 정보 입력 후 심사 제출
-
-## 💡 포함된 기능
-- 토스 bridge API (결제, 뒤로가기, 공유 등)
-- 반응형 모바일 UI
-- 터치 최적화 인터랙션
-- 다크모드 지원
-
-## 📱 테스트
-업로드 전에 \`index.html\`을 브라우저에서 열어 테스트해보세요.
-모바일 기기에서 테스트하려면 로컬 서버를 띄우거나 파일을 호스팅하세요.
-
----
-앱인토스 빌더로 제작됨
-`);
+    zip.file("README.md", `# ${projectName}\n\n이 파일을 앱인토스 콘솔에 업로드하세요.\n\n---\n앱인토스 빌더로 제작됨\n`);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, `${projectName.replace(/\s+/g, "-").toLowerCase()}.zip`);
+    setLastExportType('html');
     setShowExport(true);
+    setShowExportMenu(false);
   }, [query, darkMode, projectName, tossMode]);
+
+  const handleExportSDK = useCallback(async () => {
+    const json = query.serialize();
+    const files = generateAitProject(json, projectName);
+
+    const JSZip = (await import("jszip")).default;
+    const { saveAs } = await import("file-saver");
+
+    const zip = new JSZip();
+    for (const [path, content] of Object.entries(files)) {
+      zip.file(path, content);
+    }
+
+    const blob = await zip.generateAsync({ type: "blob" });
+    saveAs(blob, `${projectName.replace(/\s+/g, "-").toLowerCase()}-sdk.zip`);
+    setLastExportType('sdk');
+    setShowExport(true);
+    setShowExportMenu(false);
+  }, [query, projectName]);
+
+  const handleExport = useCallback(() => {
+    setShowExportMenu(prev => !prev);
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -248,12 +246,38 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
           >
             👁
           </button>
-          <button 
-            onClick={handleExport} 
-            className="px-4 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white hover:bg-[#1B64DA] font-medium"
-          >
-            📦 내보내기
-          </button>
+          <div className="relative">
+            <button 
+              onClick={handleExport} 
+              className="px-4 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white hover:bg-[#1B64DA] font-medium"
+            >
+              📦 내보내기
+            </button>
+            {showExportMenu && (
+              <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-56">
+                <button
+                  onClick={handleExportHTML}
+                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <span>📄</span>
+                  <div>
+                    <div className="font-medium">HTML 내보내기</div>
+                    <div className="text-xs text-gray-400">미리보기용 · 단일 파일</div>
+                  </div>
+                </button>
+                <button
+                  onClick={handleExportSDK}
+                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <span>📦</span>
+                  <div>
+                    <div className="font-medium text-[#3182F6]">앱인토스 SDK</div>
+                    <div className="text-xs text-gray-400">심사 제출용 · React 프로젝트</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -292,12 +316,24 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
           >
             💾
           </button>
-          <button 
-            onClick={handleExport} 
-            className="px-3 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium"
-          >
-            📦 내보내기
-          </button>
+          <div className="relative">
+            <button 
+              onClick={handleExport} 
+              className="px-3 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium"
+            >
+              📦 내보내기
+            </button>
+            {showExportMenu && (
+              <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-52">
+                <button onClick={handleExportHTML} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-2">
+                  <span>📄</span><div><div className="font-medium">HTML</div><div className="text-xs text-gray-400">미리보기용</div></div>
+                </button>
+                <button onClick={handleExportSDK} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-2">
+                  <span>📦</span><div><div className="font-medium text-[#3182F6]">앱인토스 SDK</div><div className="text-xs text-gray-400">심사 제출용</div></div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -319,17 +355,32 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
             <div className="text-center mb-6">
               <div className="text-5xl mb-3">🎉</div>
               <h3 className="text-xl font-bold mb-2">내보내기 완료!</h3>
-              <p className="text-gray-500 text-sm">ZIP 파일이 다운로드되었습니다.</p>
+              <p className="text-gray-500 text-sm">{lastExportType === 'sdk' ? '앱인토스 SDK 프로젝트가' : 'HTML'} 다운로드되었습니다.</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 mb-6">
-              <h4 className="font-bold text-sm mb-3">📋 앱인토스에 업로드하는 방법</h4>
-              <ol className="text-sm text-gray-600 space-y-2">
-                <li>1. <a href="https://apps-in-toss.toss.im" className="text-[#3182F6] underline" target="_blank" rel="noopener noreferrer">앱인토스 콘솔</a> 접속</li>
-                <li>2. &apos;새 앱 만들기&apos; 클릭</li>
-                <li>3. &apos;파일 업로드&apos; 선택</li>
-                <li>4. 다운로드한 ZIP 파일 업로드</li>
-                <li>5. 앱 정보 입력 후 심사 제출</li>
-              </ol>
+              {lastExportType === 'sdk' ? (
+                <>
+                  <h4 className="font-bold text-sm mb-3">📋 SDK 프로젝트 사용법</h4>
+                  <ol className="text-sm text-gray-600 space-y-2">
+                    <li>1. ZIP 파일 압축 해제</li>
+                    <li>2. <code className="bg-gray-200 px-1 rounded">npm install</code> 실행</li>
+                    <li>3. <code className="bg-gray-200 px-1 rounded">npm run dev</code>로 개발 서버 실행</li>
+                    <li>4. <code className="bg-gray-200 px-1 rounded">npm run build</code>로 빌드</li>
+                    <li>5. <a href="https://apps-in-toss.toss.im" className="text-[#3182F6] underline" target="_blank" rel="noopener noreferrer">앱인토스 콘솔</a>에서 심사 제출</li>
+                  </ol>
+                </>
+              ) : (
+                <>
+                  <h4 className="font-bold text-sm mb-3">📋 앱인토스에 업로드하는 방법</h4>
+                  <ol className="text-sm text-gray-600 space-y-2">
+                    <li>1. <a href="https://apps-in-toss.toss.im" className="text-[#3182F6] underline" target="_blank" rel="noopener noreferrer">앱인토스 콘솔</a> 접속</li>
+                    <li>2. &apos;새 앱 만들기&apos; 클릭</li>
+                    <li>3. &apos;파일 업로드&apos; 선택</li>
+                    <li>4. 다운로드한 ZIP 파일 업로드</li>
+                    <li>5. 앱 정보 입력 후 심사 제출</li>
+                  </ol>
+                </>
+              )}
             </div>
             <button onClick={() => setShowExport(false)} className="w-full bg-[#3182F6] text-white py-3 rounded-xl font-semibold active:bg-[#1B64DA]">
               확인
