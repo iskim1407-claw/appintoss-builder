@@ -16,6 +16,12 @@ import { BadgeComponent } from "../user/BadgeComponent";
 import { CarouselComponent } from "../user/CarouselComponent";
 import { ProgressBarComponent } from "../user/ProgressBarComponent";
 import { SpacerComponent } from "../user/SpacerComponent";
+// 핀테크 컴포넌트
+import { PaymentComponent } from "../user/PaymentComponent";
+import { AccountComponent } from "../user/AccountComponent";
+import { CreditScoreComponent } from "../user/CreditScoreComponent";
+import { ProductCompareComponent } from "../user/ProductCompareComponent";
+import { TransactionListComponent } from "../user/TransactionListComponent";
 
 // Extended component type with craft config
 interface CraftComponent<P = Record<string, unknown>> extends React.FC<P> {
@@ -61,9 +67,16 @@ const components: ComponentInfo[] = [
   // 피드백
   { name: "뱃지", icon: "🔴", component: BadgeComponent, category: "피드백", defaultProps: {} },
   { name: "진행바", icon: "📊", component: ProgressBarComponent, category: "피드백", defaultProps: {} },
+  
+  // 핀테크
+  { name: "결제/송금", icon: "💳", component: PaymentComponent, category: "핀테크", defaultProps: {} },
+  { name: "계좌 연결", icon: "🏦", component: AccountComponent, category: "핀테크", defaultProps: {} },
+  { name: "신용점수", icon: "📈", component: CreditScoreComponent, category: "핀테크", defaultProps: {} },
+  { name: "상품 비교", icon: "⚖️", component: ProductCompareComponent, category: "핀테크", defaultProps: {} },
+  { name: "거래내역", icon: "📑", component: TransactionListComponent, category: "핀테크", defaultProps: {} },
 ];
 
-const categories = ["전체", "기본", "레이아웃", "입력", "네비게이션", "피드백"];
+const categories = ["전체", "기본", "레이아웃", "입력", "네비게이션", "피드백", "핀테크"];
 
 interface ComponentPanelProps {
   isMobile?: boolean;

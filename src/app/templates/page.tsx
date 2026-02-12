@@ -18,9 +18,13 @@ export default function TemplatesPage() {
       <nav className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-[#3182F6]">앱인토스 빌더</Link>
-          <Link href="/editor" className="text-sm bg-[#3182F6] text-white px-4 py-2 rounded-xl hover:bg-[#1B64DA] transition">
-            에디터 열기
-          </Link>
+          <div className="flex gap-4 items-center">
+            <Link href="/security" className="text-sm text-gray-600 hover:text-gray-900">🔒 보안점검</Link>
+            <Link href="/documents" className="text-sm text-gray-600 hover:text-gray-900">📄 문서</Link>
+            <Link href="/editor" className="text-sm bg-[#3182F6] text-white px-4 py-2 rounded-xl hover:bg-[#1B64DA] transition">
+              에디터 열기
+            </Link>
+          </div>
         </div>
       </nav>
 

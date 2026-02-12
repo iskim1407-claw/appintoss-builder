@@ -22,9 +22,12 @@ interface ToolbarProps {
   setViewportWidth: (width: number) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
+  tossMode?: boolean;
+  setTossMode?: (mode: boolean) => void;
 }
 
-export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode }: ToolbarProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode, tossMode = false, setTossMode }: ToolbarProps) => {
   const { actions, query, canUndo, canRedo } = useEditor((state, query) => ({
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
@@ -75,7 +78,8 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     const json = query.serialize();
     const html = generateHTML(json, { 
       darkMode, 
-      projectName 
+      projectName,
+      tossMode 
     });
 
     const JSZip = (await import("jszip")).default;
@@ -114,7 +118,7 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, `${projectName.replace(/\s+/g, "-").toLowerCase()}.zip`);
     setShowExport(true);
-  }, [query, darkMode, projectName]);
+  }, [query, darkMode, projectName, tossMode]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -213,6 +217,15 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
             {darkMode ? "☀️" : "🌙"}
           </button>
           
+          {/* Toss Mode Toggle */}
+          <button 
+            onClick={() => setTossMode?.(!tossMode)}
+            className={`px-3 py-1.5 text-sm rounded-lg border transition flex items-center gap-1 ${tossMode ? "bg-[#0064FF] text-white border-[#0064FF]" : "border-gray-200 hover:bg-gray-50"}`}
+            title="Toss MiniApp 심사 모드"
+          >
+            {tossMode ? "✓" : ""} 토스
+          </button>
+          
           <div className="w-px h-6 bg-gray-200 mx-1" />
           
           {/* File Operations */}
@@ -253,12 +266,25 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
             type="text"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="text-sm text-gray-700 font-medium bg-transparent border-none outline-none w-24 px-1 py-0.5 rounded focus:bg-gray-100"
+            className="text-sm text-gray-700 font-medium bg-transparent border-none outline-none w-20 px-1 py-0.5 rounded focus:bg-gray-100"
             placeholder="이름"
           />
+          {tossMode && (
+            <span className="px-1.5 py-0.5 text-xs rounded bg-[#0064FF] text-white font-medium">
+              토스
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5">
+          {/* Toss Mode Toggle (Mobile) */}
+          <button 
+            onClick={() => setTossMode?.(!tossMode)}
+            className={`p-2 text-base rounded-lg ${tossMode ? "text-[#0064FF]" : "text-gray-400"} active:bg-gray-100`}
+            title="토스 심사 모드"
+          >
+            {tossMode ? "✓T" : "T"}
+          </button>
           <button 
             onClick={handleSave} 
             className="p-2 text-base rounded-lg active:bg-gray-100"

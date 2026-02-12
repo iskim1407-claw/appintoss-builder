@@ -3,6 +3,9 @@
  * Craft.js JSON을 완전한 정적 HTML+CSS+JS로 변환
  */
 
+import { generateSafeAreaCSS, generateViewportMeta } from './toss/safeArea';
+import { generateSDKBridgeScript } from './toss/sdkBridge';
+
 interface NodeData {
   type: { resolvedName: string };
   props: Record<string, unknown>;
@@ -17,6 +20,8 @@ export interface GenerateOptions {
   projectName?: string;
   pages?: Array<{ id: string; name: string; json: string }>;
   currentPageId?: string;
+  /** Toss MiniApp 심사 모드 활성화 */
+  tossMode?: boolean;
 }
 
 // 토스 스타일 CSS 변수
@@ -305,6 +310,458 @@ body {
   height: 100%;
   border-radius: 4px;
   transition: width 0.5s ease;
+}
+
+/* Fintech Components - Payment */
+.payment-card {
+  background: var(--bg-primary);
+  padding: 20px;
+  margin: 8px 0;
+}
+.payment-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.payment-input-group {
+  margin-bottom: 16px;
+}
+.payment-input-group label {
+  display: block;
+  font-size: 14px;
+  color: var(--toss-gray-500);
+  margin-bottom: 8px;
+}
+.payment-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 15px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.payment-amount-wrapper {
+  position: relative;
+}
+.payment-amount-input {
+  width: 100%;
+  padding: 16px 40px 16px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: right;
+  background: var(--bg-secondary);
+}
+.payment-currency {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--toss-gray-500);
+}
+.payment-quick-amounts {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.payment-quick-btn {
+  flex: 1;
+  padding: 10px;
+  background: var(--toss-gray-50);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--toss-gray-700);
+  cursor: pointer;
+}
+.payment-quick-btn:active { background: var(--toss-gray-100); }
+.payment-fee {
+  font-size: 14px;
+  color: var(--toss-gray-400);
+  margin-bottom: 16px;
+}
+.payment-submit-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+}
+.payment-submit-btn:active { opacity: 0.9; transform: scale(0.98); }
+
+/* Fintech Components - Account */
+.account-card {
+  background: var(--bg-primary);
+  overflow: hidden;
+  margin: 8px 0;
+}
+.account-header {
+  padding: 16px;
+  color: white;
+}
+.account-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.account-header p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+.account-content {
+  padding: 16px;
+}
+.account-banks {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.account-bank-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.account-bank-btn:active { background: var(--toss-gray-100); }
+.account-bank-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.account-bank-btn span {
+  font-size: 12px;
+  color: var(--toss-gray-600);
+}
+.account-input-group {
+  margin-bottom: 16px;
+}
+.account-input-group label {
+  display: block;
+  font-size: 14px;
+  color: var(--toss-gray-500);
+  margin-bottom: 8px;
+}
+.account-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 15px;
+  background: var(--bg-secondary);
+}
+.account-submit-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+}
+.account-notice {
+  text-align: center;
+  font-size: 12px;
+  color: var(--toss-gray-400);
+  margin-top: 12px;
+}
+
+/* Fintech Components - Credit Score */
+.credit-card {
+  background: var(--bg-primary);
+  padding: 24px;
+  margin: 8px 0;
+}
+.credit-gauge {
+  position: relative;
+  width: 192px;
+  height: 192px;
+  margin: 0 auto 16px;
+}
+.credit-gauge svg {
+  width: 100%;
+  height: 100%;
+}
+.credit-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.credit-score {
+  font-size: 36px;
+  font-weight: 700;
+}
+.credit-max {
+  font-size: 14px;
+  color: var(--toss-gray-400);
+}
+.credit-grade {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 700;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+}
+.credit-grade span:nth-child(2) {
+  opacity: 0.5;
+}
+.credit-details {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.credit-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.credit-detail-row span:first-child {
+  color: var(--toss-gray-500);
+}
+.credit-tip {
+  display: flex;
+  gap: 12px;
+  background: #EBF4FF;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.credit-tip > span {
+  font-size: 20px;
+}
+.credit-tip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--toss-gray-800);
+}
+.credit-tip-desc {
+  font-size: 12px;
+  color: var(--toss-gray-500);
+  margin-top: 4px;
+}
+
+/* Fintech Components - Product Compare */
+.product-compare {
+  background: var(--bg-primary);
+  padding: 16px;
+  margin: 8px 0;
+}
+.product-compare-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.product-list.horizontal {
+  flex-direction: row;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.product-list.horizontal .product-card {
+  min-width: 280px;
+  flex-shrink: 0;
+}
+.product-card {
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--bg-primary);
+}
+.product-card.recommended {
+  background: #EBF4FF;
+}
+.product-recommend-tag {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+.product-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.product-name {
+  font-weight: 700;
+}
+.product-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+.product-rate {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.product-benefit {
+  font-size: 14px;
+  color: var(--toss-gray-600);
+  margin-bottom: 8px;
+}
+.product-desc {
+  font-size: 12px;
+  color: var(--toss-gray-400);
+}
+.product-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 16px;
+  cursor: pointer;
+  background: var(--toss-gray-100);
+  color: var(--toss-gray-700);
+}
+.product-btn.primary {
+  color: white;
+}
+.product-notice {
+  text-align: center;
+  font-size: 12px;
+  color: var(--toss-gray-400);
+  margin-top: 16px;
+}
+
+/* Fintech Components - Transaction List */
+.tx-list {
+  background: var(--bg-primary);
+  margin: 8px 0;
+}
+.tx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.tx-header h3 {
+  font-weight: 700;
+}
+.tx-view-all {
+  font-size: 14px;
+  color: var(--toss-gray-400);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.tx-items {
+  
+}
+.tx-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--toss-gray-50);
+}
+.tx-item:last-child {
+  border-bottom: none;
+}
+.tx-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tx-content {
+  flex: 1;
+  min-width: 0;
+}
+.tx-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tx-title {
+  font-weight: 500;
+}
+.tx-category {
+  padding: 2px 8px;
+  background: var(--toss-gray-100);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--toss-gray-500);
+}
+.tx-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+.tx-subtitle {
+  font-size: 13px;
+  color: var(--toss-gray-400);
+}
+.tx-date {
+  font-size: 13px;
+  color: var(--toss-gray-300);
+}
+.tx-amount {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.tx-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+}
+.tx-more-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--toss-gray-600);
+  cursor: pointer;
 }
 `;
 
@@ -667,6 +1124,229 @@ function renderComponent(node: NodeData, nodes: NodesMap, nodeId: string): strin
       return `<div style="height:${height}px"></div>${childrenHtml}`;
     }
     
+    // 핀테크 컴포넌트
+    case 'PaymentComponent': {
+      const title = escapeHtml(String(props.title || '송금하기'));
+      const recipientLabel = escapeHtml(String(props.recipientLabel || '받는 분'));
+      const recipientPlaceholder = escapeHtml(String(props.recipientPlaceholder || '이름 또는 계좌번호'));
+      const buttonText = escapeHtml(String(props.buttonText || '송금하기'));
+      const buttonColor = props.buttonColor || '#3182F6';
+      const showQuickAmounts = props.showQuickAmounts !== false;
+      const quickAmounts = (props.quickAmounts as number[]) || [10000, 50000, 100000, 500000];
+      const showFee = props.showFee;
+      const feeAmount = Number(props.feeAmount) || 0;
+      const borderRadius = props.borderRadius || 16;
+      
+      const quickAmountsHtml = showQuickAmounts ? `
+        <div class="payment-quick-amounts">
+          ${quickAmounts.map(amt => `<button class="payment-quick-btn" onclick="addAmount(${amt})">+${(amt/10000).toFixed(0)}만</button>`).join('')}
+        </div>
+      ` : '';
+      
+      return `<div class="payment-card" style="border-radius:${borderRadius}px">
+        <h3 class="payment-title">${title}</h3>
+        <div class="payment-input-group">
+          <label>${recipientLabel}</label>
+          <input type="text" placeholder="${recipientPlaceholder}" class="payment-input">
+        </div>
+        <div class="payment-input-group">
+          <label>금액</label>
+          <div class="payment-amount-wrapper">
+            <input type="text" id="paymentAmount" placeholder="0" class="payment-amount-input" inputmode="numeric">
+            <span class="payment-currency">원</span>
+          </div>
+        </div>
+        ${quickAmountsHtml}
+        ${showFee && feeAmount > 0 ? `<p class="payment-fee">수수료: ${feeAmount.toLocaleString()}원</p>` : ''}
+        <button class="payment-submit-btn" style="background:${buttonColor}" onclick="handlePayment()">${buttonText}</button>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'AccountComponent': {
+      const title = escapeHtml(String(props.title || '계좌 연결'));
+      const description = escapeHtml(String(props.description || '간편하게 계좌를 연결하세요'));
+      const buttonText = escapeHtml(String(props.buttonText || '연결하기'));
+      const buttonColor = props.buttonColor || '#3182F6';
+      const showBankLogos = props.showBankLogos !== false;
+      const borderRadius = props.borderRadius || 16;
+      
+      const banks = [
+        { code: '092', name: '토스', color: '#3182F6' },
+        { code: '088', name: '신한', color: '#0046FF' },
+        { code: '004', name: '국민', color: '#FFBC00' },
+        { code: '020', name: '우리', color: '#0066B3' },
+        { code: '003', name: '기업', color: '#004EA2' },
+        { code: '011', name: '농협', color: '#00AB4E' },
+        { code: '090', name: '카카오', color: '#FFE600' },
+        { code: '089', name: '케이', color: '#FFB800' },
+      ];
+      
+      const banksHtml = showBankLogos ? `
+        <div class="account-banks">
+          ${banks.map(b => `<button class="account-bank-btn" onclick="selectBank('${b.code}')">
+            <div class="account-bank-icon" style="background:${b.color}">${b.name.charAt(0)}</div>
+            <span>${b.name}</span>
+          </button>`).join('')}
+        </div>
+      ` : '';
+      
+      return `<div class="account-card" style="border-radius:${borderRadius}px">
+        <div class="account-header" style="background:linear-gradient(135deg,${buttonColor},${buttonColor}dd)">
+          <h3>${title}</h3>
+          <p>${description}</p>
+        </div>
+        <div class="account-content">
+          ${banksHtml}
+          <div class="account-input-group">
+            <label>계좌번호</label>
+            <input type="text" placeholder="계좌번호를 입력하세요" class="account-input">
+          </div>
+          <button class="account-submit-btn" style="background:${buttonColor}">${buttonText}</button>
+          <p class="account-notice">계좌 연결 시 본인인증이 필요합니다</p>
+        </div>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'CreditScoreComponent': {
+      const score = Number(props.score) || 850;
+      const maxScore = Number(props.maxScore) || 1000;
+      const showGauge = props.showGauge !== false;
+      const showDetails = props.showDetails !== false;
+      const lastUpdated = escapeHtml(String(props.lastUpdated || '2024.02.12'));
+      const borderRadius = props.borderRadius || 20;
+      
+      // 등급 계산
+      let grade = '1등급', gradeDesc = '최우수', gradeColor = '#3182F6';
+      if (score >= 900) { grade = '1등급'; gradeDesc = '최우수'; gradeColor = '#3182F6'; }
+      else if (score >= 800) { grade = '2등급'; gradeDesc = '우수'; gradeColor = '#36B37E'; }
+      else if (score >= 700) { grade = '3등급'; gradeDesc = '양호'; gradeColor = '#6554C0'; }
+      else if (score >= 600) { grade = '4등급'; gradeDesc = '보통'; gradeColor = '#FFAB00'; }
+      else if (score >= 500) { grade = '5등급'; gradeDesc = '관리 필요'; gradeColor = '#FF8B00'; }
+      else { grade = '6등급'; gradeDesc = '주의'; gradeColor = '#FF5630'; }
+      
+      if (props.gaugeColor) gradeColor = String(props.gaugeColor);
+      
+      const percentage = (score / maxScore) * 100;
+      const circumference = 2 * Math.PI * 80;
+      const strokeDashoffset = circumference - (percentage / 100) * circumference;
+      
+      const gaugeHtml = showGauge ? `
+        <div class="credit-gauge">
+          <svg viewBox="0 0 180 180">
+            <circle cx="90" cy="90" r="80" fill="none" stroke="#F2F4F6" stroke-width="12"/>
+            <circle cx="90" cy="90" r="80" fill="none" stroke="${gradeColor}" stroke-width="12" stroke-linecap="round" 
+              stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}" transform="rotate(-90 90 90)"/>
+          </svg>
+          <div class="credit-gauge-center">
+            <span class="credit-score">${score}</span>
+            <span class="credit-max">/ ${maxScore}</span>
+          </div>
+        </div>
+      ` : '';
+      
+      const detailsHtml = showDetails ? `
+        <div class="credit-details">
+          <div class="credit-detail-row"><span>마지막 업데이트</span><span>${lastUpdated}</span></div>
+          <div class="credit-detail-row"><span>조회 기관</span><span>NICE평가정보</span></div>
+        </div>
+      ` : '';
+      
+      return `<div class="credit-card" style="border-radius:${borderRadius}px">
+        ${gaugeHtml}
+        <div class="credit-grade" style="background:${gradeColor}">
+          <span>${grade}</span><span>|</span><span>${gradeDesc}</span>
+        </div>
+        ${detailsHtml}
+        <div class="credit-tip">
+          <span>💡</span>
+          <div>
+            <p class="credit-tip-title">점수 올리는 방법</p>
+            <p class="credit-tip-desc">정기적인 금융거래와 연체 없는 상환이 중요해요</p>
+          </div>
+        </div>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'ProductCompareComponent': {
+      const title = escapeHtml(String(props.title || '금융상품 비교'));
+      const accentColor = props.accentColor || '#3182F6';
+      const showBadge = props.showBadge !== false;
+      const cardStyle = props.cardStyle || 'vertical';
+      const borderRadius = props.borderRadius || 16;
+      
+      const products = (props.products as Array<{name: string; badge?: string; rate: string; benefit: string; description: string; recommended?: boolean}>) || [
+        { name: '적금 플러스', badge: '인기', rate: '연 4.5%', benefit: '최대 50만원 캐시백', description: '자유적금 · 비대면 가입', recommended: true },
+        { name: '정기예금', rate: '연 3.8%', benefit: '가입 즉시 이자 지급', description: '1년 만기 · 중도해지 가능' },
+        { name: '파킹통장', badge: '신규', rate: '연 2.5%', benefit: '매일 이자 지급', description: '수시입출금 · 한도무제한' },
+      ];
+      
+      const productsHtml = products.map(p => `
+        <div class="product-card ${p.recommended ? 'recommended' : ''}" style="border-color:${p.recommended ? accentColor : '#E5E8EB'}">
+          ${p.recommended ? `<div class="product-recommend-tag" style="background:${accentColor}">추천</div>` : ''}
+          <div class="product-name-row">
+            <span class="product-name">${escapeHtml(p.name)}</span>
+            ${showBadge && p.badge ? `<span class="product-badge" style="background:${p.badge === '인기' ? '#FF6B6B' : accentColor}">${escapeHtml(p.badge)}</span>` : ''}
+          </div>
+          <div class="product-rate" style="color:${accentColor}">${escapeHtml(p.rate)}</div>
+          <div class="product-benefit">🎁 ${escapeHtml(p.benefit)}</div>
+          <p class="product-desc">${escapeHtml(p.description)}</p>
+          <button class="product-btn ${p.recommended ? 'primary' : ''}" style="${p.recommended ? `background:${accentColor}` : ''}">${p.recommended ? '바로 가입하기' : '자세히 보기'}</button>
+        </div>
+      `).join('');
+      
+      return `<div class="product-compare" style="border-radius:${borderRadius}px">
+        <h3 class="product-compare-title">${title}</h3>
+        <div class="product-list ${cardStyle === 'horizontal' ? 'horizontal' : ''}">${productsHtml}</div>
+        <p class="product-notice">* 금리는 변동될 수 있으며, 세전 기준입니다</p>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'TransactionListComponent': {
+      const title = escapeHtml(String(props.title || '거래내역'));
+      const showDate = props.showDate !== false;
+      const showCategory = props.showCategory !== false;
+      const showIcon = props.showIcon !== false;
+      const incomeColor = props.incomeColor || '#3182F6';
+      const expenseColor = props.expenseColor || '#191F28';
+      const borderRadius = props.borderRadius || 16;
+      
+      const transactions = (props.transactions as Array<{id: string; title: string; subtitle?: string; amount: number; date: string; type: 'income' | 'expense'; category?: string; icon?: string}>) || [
+        { id: '1', title: '토스페이 충전', subtitle: '신한은행', amount: 500000, date: '02.12', type: 'income', category: '충전', icon: '💳' },
+        { id: '2', title: '스타벅스', subtitle: '카드결제', amount: 6500, date: '02.12', type: 'expense', category: '카페', icon: '☕' },
+        { id: '3', title: '월급', subtitle: '(주)회사', amount: 3500000, date: '02.10', type: 'income', category: '급여', icon: '💰' },
+      ];
+      
+      const txHtml = transactions.map(tx => {
+        const amountStr = tx.type === 'income' ? `+${tx.amount.toLocaleString()}` : `-${tx.amount.toLocaleString()}`;
+        const amountColor = tx.type === 'income' ? incomeColor : expenseColor;
+        return `<div class="tx-item">
+          ${showIcon ? `<div class="tx-icon">${tx.icon || (tx.type === 'income' ? '📥' : '📤')}</div>` : ''}
+          <div class="tx-content">
+            <div class="tx-title-row">
+              <span class="tx-title">${escapeHtml(tx.title)}</span>
+              ${showCategory && tx.category ? `<span class="tx-category">${escapeHtml(tx.category)}</span>` : ''}
+            </div>
+            <div class="tx-subtitle-row">
+              ${tx.subtitle ? `<span class="tx-subtitle">${escapeHtml(tx.subtitle)}</span>` : ''}
+              ${showDate ? `<span class="tx-date">· ${tx.date}</span>` : ''}
+            </div>
+          </div>
+          <div class="tx-amount" style="color:${amountColor}">${amountStr}원</div>
+        </div>`;
+      }).join('');
+      
+      return `<div class="tx-list" style="border-radius:${borderRadius}px">
+        <div class="tx-header">
+          <h3>${title}</h3>
+          <button class="tx-view-all">전체보기 →</button>
+        </div>
+        <div class="tx-items">${txHtml}</div>
+        <div class="tx-footer">
+          <button class="tx-more-btn">더보기</button>
+        </div>
+      </div>${childrenHtml}`;
+    }
+    
     case 'Canvas':
     default:
       return `<div class="content-area">${childrenHtml}</div>`;
@@ -796,10 +1476,48 @@ document.addEventListener('appintoss:navigate', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
   initCarousels();
 });
+
+// Fintech: Payment
+var paymentAmount = 0;
+
+function addAmount(amt) {
+  paymentAmount += amt;
+  var input = document.getElementById('paymentAmount');
+  if (input) {
+    input.value = paymentAmount.toLocaleString();
+  }
+}
+
+function handlePayment() {
+  if (paymentAmount <= 0) {
+    bridge.toast('금액을 입력해주세요');
+    return;
+  }
+  bridge.pay({
+    amount: paymentAmount,
+    orderId: 'payment_' + Date.now(),
+    orderName: '송금'
+  }).then(function(result) {
+    bridge.toast('송금이 완료되었습니다!');
+    paymentAmount = 0;
+    var input = document.getElementById('paymentAmount');
+    if (input) input.value = '';
+  });
+}
+
+// Fintech: Account
+var selectedBankCode = null;
+
+function selectBank(code) {
+  selectedBankCode = code;
+  document.querySelectorAll('.account-bank-btn').forEach(function(btn) {
+    btn.style.border = btn.querySelector('[onclick*="' + code + '"]') ? '2px solid var(--toss-blue)' : 'none';
+  });
+}
 `;
 
 export function generateHTML(json: string, options: GenerateOptions = {}): string {
-  const { darkMode = false, projectName = '앱인토스 미니앱' } = options;
+  const { darkMode = false, projectName = '앱인토스 미니앱', tossMode = false } = options;
   
   let nodes: NodesMap;
   try {
@@ -810,28 +1528,57 @@ export function generateHTML(json: string, options: GenerateOptions = {}): strin
   
   const contentHtml = renderComponent(nodes['ROOT'], nodes, 'ROOT');
   
+  // Toss 모드용 viewport meta
+  const viewportContent = tossMode 
+    ? generateViewportMeta()
+    : 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+  
+  // Toss 모드용 추가 CSS
+  const tossModeCSS = tossMode ? generateSafeAreaCSS() : '';
+  
+  // Toss 모드용 SDK 브릿지
+  const tossModeScript = tossMode ? generateSDKBridgeScript() : '';
+  
+  // 컨테이너 클래스
+  const containerClass = tossMode ? 'toss-app-container' : 'app-container';
+  
+  // Toss 모드 주석
+  const tossModeComment = tossMode 
+    ? `<!--
+  ========================================
+  🎯 Toss MiniApp 심사 대응 모드
+  ========================================
+  - Safe-area CSS 적용됨
+  - Toss SDK 브릿지 포함
+  - viewport-fit=cover 활성화
+  ========================================
+-->\n` 
+    : '';
+  
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="${viewportContent}">
   <meta name="theme-color" content="${darkMode ? '#111111' : '#FFFFFF'}">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="${darkMode ? 'black-translucent' : 'default'}">
   <title>${escapeHtml(projectName)}</title>
-  <style>
+  ${tossModeComment}<style>
     ${getTossStyles(darkMode)}
     ${getBaseStyles()}
+    ${tossModeCSS}
   </style>
 </head>
 <body>
-  <div class="app-container" id="app-content">
+  <div class="${containerClass}" id="app-content">
     ${contentHtml}
   </div>
   
   <div class="toast-container"></div>
   
   <script>
+    ${tossModeScript}
     ${getAppintossSDK()}
     ${getInteractionScript()}
   </script>
@@ -841,7 +1588,7 @@ export function generateHTML(json: string, options: GenerateOptions = {}): strin
 
 // 다중 페이지용 HTML 생성
 export function generateMultiPageHTML(pages: Array<{ id: string; name: string; json: string }>, options: GenerateOptions = {}): string {
-  const { darkMode = false, projectName = '앱인토스 미니앱' } = options;
+  const { darkMode = false, projectName = '앱인토스 미니앱', tossMode = false } = options;
   
   // 각 페이지의 콘텐츠를 미리 렌더링
   const pagesContent = pages.map(page => {
@@ -863,28 +1610,57 @@ export function generateMultiPageHTML(pages: Array<{ id: string; name: string; j
     `registerPage('${p.id}', ${JSON.stringify(p.content)});`
   ).join('\n  ');
   
+  // Toss 모드용 viewport meta
+  const viewportContent = tossMode 
+    ? generateViewportMeta()
+    : 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+  
+  // Toss 모드용 추가 CSS
+  const tossModeCSS = tossMode ? generateSafeAreaCSS() : '';
+  
+  // Toss 모드용 SDK 브릿지
+  const tossModeScript = tossMode ? generateSDKBridgeScript() : '';
+  
+  // 컨테이너 클래스
+  const containerClass = tossMode ? 'toss-app-container' : 'app-container';
+  
+  // Toss 모드 주석
+  const tossModeComment = tossMode 
+    ? `<!--
+  ========================================
+  🎯 Toss MiniApp 심사 대응 모드
+  ========================================
+  - Safe-area CSS 적용됨
+  - Toss SDK 브릿지 포함
+  - viewport-fit=cover 활성화
+  ========================================
+-->\n` 
+    : '';
+  
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="${viewportContent}">
   <meta name="theme-color" content="${darkMode ? '#111111' : '#FFFFFF'}">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="${darkMode ? 'black-translucent' : 'default'}">
   <title>${escapeHtml(projectName)}</title>
-  <style>
+  ${tossModeComment}<style>
     ${getTossStyles(darkMode)}
     ${getBaseStyles()}
+    ${tossModeCSS}
   </style>
 </head>
 <body>
-  <div class="app-container" id="app-content">
+  <div class="${containerClass}" id="app-content">
     ${firstPage?.content || ''}
   </div>
   
   <div class="toast-container"></div>
   
   <script>
+    ${tossModeScript}
     ${getAppintossSDK()}
     ${getInteractionScript()}
     

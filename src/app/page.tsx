@@ -165,6 +165,12 @@ export default function LandingPage() {
             <Link href="/templates" className="text-sm text-gray-600 hover:text-gray-900">
               템플릿
             </Link>
+            <Link href="/security" className="text-sm text-gray-600 hover:text-gray-900">
+              🔒 보안점검
+            </Link>
+            <Link href="/documents" className="text-sm text-gray-600 hover:text-gray-900">
+              📄 문서
+            </Link>
             <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">
               요금제
             </a>
@@ -489,6 +495,8 @@ export default function LandingPage() {
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
               <Link href="/templates" className="hover:text-gray-900">템플릿</Link>
+              <Link href="/security" className="hover:text-gray-900">🔒 보안점검</Link>
+              <Link href="/documents" className="hover:text-gray-900">📄 문서</Link>
               <a href="#pricing" className="hover:text-gray-900">요금제</a>
               <a href="#faq" className="hover:text-gray-900">FAQ</a>
               <Link href="/editor" className="hover:text-gray-900">에디터</Link>
