@@ -22,16 +22,22 @@ import { CarouselComponent } from "@/components/user/CarouselComponent";
 import { ProgressBarComponent } from "@/components/user/ProgressBarComponent";
 import { SpacerComponent } from "@/components/user/SpacerComponent";
 import { Canvas } from "@/components/user/Container";
-// 핀테크 컴포넌트 (향후 사용 예정)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// TDS 컴포넌트
+import { NavigationComponent } from "@/components/user/NavigationComponent";
+import { ListRowComponent } from "@/components/user/ListRowComponent";
+import { TabComponent } from "@/components/user/TabComponent";
+import { TextFieldComponent } from "@/components/user/TextFieldComponent";
+import { SwitchComponent } from "@/components/user/SwitchComponent";
+import { CheckboxComponent } from "@/components/user/CheckboxComponent";
+import { ToastComponent } from "@/components/user/ToastComponent";
+import { SkeletonComponent } from "@/components/user/SkeletonComponent";
+import { DialogComponent } from "@/components/user/DialogComponent";
+import { BottomCTAComponent } from "@/components/user/BottomCTAComponent";
+// 핀테크 컴포넌트
 import { PaymentComponent } from "@/components/user/PaymentComponent";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AccountComponent } from "@/components/user/AccountComponent";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CreditScoreComponent } from "@/components/user/CreditScoreComponent";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ProductCompareComponent } from "@/components/user/ProductCompareComponent";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TransactionListComponent } from "@/components/user/TransactionListComponent";
 
 const LoadTemplate = () => {
@@ -49,11 +55,20 @@ const LoadTemplate = () => {
 };
 
 const resolver = {
-  TextComponent, ButtonComponent, ImageComponent, CardComponent,
-  ListComponent, DividerComponent, HeaderComponent, InputComponent,
-  BottomSheetComponent, TabBarComponent, BadgeComponent,
-  CarouselComponent, ProgressBarComponent, SpacerComponent, Canvas,
-  // 핀테크 컴포넌트
+  // TDS 핵심
+  NavigationComponent, ButtonComponent, TextComponent, BadgeComponent,
+  ListRowComponent, TabComponent, TabBarComponent,
+  // TDS 입력
+  TextFieldComponent, SwitchComponent, CheckboxComponent,
+  // TDS 피드백
+  ProgressBarComponent, ToastComponent, SkeletonComponent, DialogComponent,
+  // TDS 레이아웃
+  BottomCTAComponent, BottomSheetComponent,
+  // 기본
+  HeaderComponent, ImageComponent, CardComponent, ListComponent,
+  DividerComponent, SpacerComponent, CarouselComponent, InputComponent,
+  Canvas,
+  // 핀테크
   PaymentComponent, AccountComponent, CreditScoreComponent,
   ProductCompareComponent, TransactionListComponent,
 };
@@ -275,8 +290,10 @@ function MobileNodeRenderer({ nodeId, nodes }: { nodeId: string; nodes: Record<s
       return <div className="px-2 py-2"><span className="inline-block px-3 py-1 rounded-full text-sm font-medium text-white" style={{ backgroundColor: String(props.color || "#3182F6") }}>{String(props.text || "뱃지")}</span></div>;
     case "ProgressBarComponent":
       return <div className="px-2 py-2"><div className="h-2 bg-gray-100 rounded-full"><div className="h-full bg-blue-500 rounded-full" style={{ width: `${Number(props.value) || 50}%` }} /></div></div>;
-    case "TabBarComponent":
-      return <div className="px-2 py-2 flex border rounded-xl overflow-hidden">{((props.tabs as string[]) || ["탭1", "탭2", "탭3"]).map((tab: string, i: number) => <div key={i} className={`flex-1 text-center py-2 text-sm ${i === 0 ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-500"}`}>{tab}</div>)}</div>;
+    case "TabBarComponent": {
+      const tabs = (props.tabs as Array<{icon?: string; label?: string}>) || [{icon: "🏠", label: "홈"}, {icon: "🔍", label: "검색"}, {icon: "👤", label: "마이"}];
+      return <div className="px-2 py-2 flex border rounded-xl overflow-hidden">{tabs.map((tab, i: number) => <div key={i} className={`flex-1 text-center py-2 text-sm ${i === 0 ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-500"}`}>{typeof tab === "string" ? tab : `${tab.icon || ""} ${tab.label || ""}`}</div>)}</div>;
+    }
     case "CarouselComponent":
       return <div className="px-2 py-2"><div className="h-40 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl flex items-center justify-center text-gray-400">🎠 캐러셀</div></div>;
     case "BottomSheetComponent":
