@@ -76,7 +76,7 @@ export default function EditorPage() {
             md:block md:w-64 md:relative md:z-auto
             ${mobileTab === "components" ? "block absolute inset-0 z-20 w-full" : "hidden"}
           `}>
-            <ComponentPanel isMobile={mobileTab === "components"} />
+            <ComponentPanel isMobile={mobileTab === "components"} onComponentAdded={() => setMobileTab("canvas")} />
           </div>
 
           {/* Center: Canvas with Frame (always rendered, single instance) */}

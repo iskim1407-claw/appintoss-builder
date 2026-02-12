@@ -80,9 +80,10 @@ const categories = ["전체", "기본", "레이아웃", "입력", "네비게이�
 
 interface ComponentPanelProps {
   isMobile?: boolean;
+  onComponentAdded?: () => void;
 }
 
-export const ComponentPanel = ({ isMobile = false }: ComponentPanelProps) => {
+export const ComponentPanel = ({ isMobile = false, onComponentAdded }: ComponentPanelProps) => {
   const { connectors, actions, query } = useEditor();
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,10 +115,13 @@ export const ComponentPanel = ({ isMobile = false }: ComponentPanelProps) => {
       toast.textContent = `✓ ${componentInfo.name} 추가됨`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 1500);
+      
+      // Auto-switch to canvas on mobile
+      if (onComponentAdded) onComponentAdded();
     } catch (e) {
       console.error("Failed to add component:", e);
     }
-  }, [actions, query]);
+  }, [actions, query, onComponentAdded]);
 
   // Mobile layout
   if (isMobile) {
