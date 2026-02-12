@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Editor, Frame, Element, useEditor } from "@craftjs/core";
+import { polyfill } from "mobile-drag-drop";
+import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
 import { ComponentPanel } from "@/components/editor/ComponentPanel";
 import { SettingsPanelComponent } from "@/components/editor/SettingsPanel";
 import { Toolbar } from "@/components/editor/Toolbar";
@@ -63,6 +65,16 @@ export default function EditorPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [tossMode, setTossMode] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("canvas");
+
+  // 모바일 터치 드래그 폴리필
+  useEffect(() => {
+    polyfill({
+      dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
+      holdToDrag: 200, // 200ms 홀드 후 드래그 시작
+    });
+    // iOS에서 dragenter 이벤트 핸들링
+    window.addEventListener("touchmove", () => {}, { passive: false });
+  }, []);
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">

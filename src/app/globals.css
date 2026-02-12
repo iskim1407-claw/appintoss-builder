@@ -21,3 +21,16 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
 }
+
+/* 모바일 터치 드래그 폴리필 */
+[draggable] {
+  -webkit-user-drag: element;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.drag-over {
+  outline: 2px dashed var(--toss-blue);
+  outline-offset: -2px;
+}

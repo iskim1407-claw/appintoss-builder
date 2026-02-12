@@ -14,6 +14,7 @@
     "@types/file-saver": "^2.0.7",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
+    "mobile-drag-drop": "^3.0.0-rc.0",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
