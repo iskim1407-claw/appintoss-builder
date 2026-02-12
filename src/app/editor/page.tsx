@@ -60,6 +60,40 @@ const resolver = {
 
 type MobileTab = "components" | "canvas" | "settings";
 
+// 에러 바운더리 — 클라이언트 크래시 방지
+class EditorErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center p-8">
+            <div className="text-5xl mb-4">⚠️</div>
+            <h2 className="text-xl font-bold mb-2">에디터 오류 발생</h2>
+            <p className="text-gray-500 mb-4 text-sm">{this.state.error?.message}</p>
+            <button
+              onClick={() => { this.setState({ hasError: false }); window.location.reload(); }}
+              className="px-6 py-3 bg-[#3182F6] text-white rounded-xl font-medium"
+            >
+              새로고침
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function EditorPage() {
   const [viewportWidth, setViewportWidth] = useState(375);
   const [darkMode, setDarkMode] = useState(false);
@@ -77,6 +111,7 @@ export default function EditorPage() {
   }, []);
 
   return (
+    <EditorErrorBoundary>
     <div className="h-screen flex flex-col bg-gray-50">
       <Editor resolver={resolver}>
         <Toolbar viewportWidth={viewportWidth} setViewportWidth={setViewportWidth} darkMode={darkMode} setDarkMode={setDarkMode} tossMode={tossMode} setTossMode={setTossMode} />
@@ -165,6 +200,7 @@ export default function EditorPage() {
         </div>
       </Editor>
     </div>
+    </EditorErrorBoundary>
   );
 }
 
@@ -177,9 +213,10 @@ function MobileCanvasView() {
     // Subscribe to editor changes
     const interval = setInterval(() => {
       try {
-        setNodes(query.serialize());
-      } catch { /* ignore */ }
-    }, 500);
+        const s = query.serialize();
+        if (s && s !== "{}") setNodes(s);
+      } catch (e) { console.warn("serialize error:", e); }
+    }, 1000);
     return () => clearInterval(interval);
   }, [query]);
 
@@ -255,6 +292,27 @@ function MobileNodeRenderer({ nodeId, nodes }: { nodeId: string; nodes: Record<s
       return <div className="px-2 py-2"><div className="bg-white rounded-2xl p-4 border"><h3 className="font-bold mb-3">{String(props.title || "금융상품 비교")}</h3><div className="space-y-2">{[{name: "적금 플러스", rate: "4.5%"}, {name: "정기예금", rate: "3.8%"}].map((p, i) => <div key={i} className="p-3 border rounded-xl"><div className="font-medium">{p.name}</div><div className="text-[#3182F6] font-bold">연 {p.rate}</div></div>)}</div></div></div>;
     case "TransactionListComponent":
       return <div className="px-2 py-2"><div className="bg-white rounded-2xl border"><div className="p-4 border-b font-bold">{String(props.title || "거래내역")}</div><div className="divide-y">{[{t: "토스페이 충전", a: "+500,000"}, {t: "스타벅스", a: "-6,500"}].map((tx, i) => <div key={i} className="p-4 flex justify-between"><span>{tx.t}</span><span className={tx.a.startsWith("+") ? "text-[#3182F6]" : ""}>{tx.a}원</span></div>)}</div></div></div>;
+    // TDS 컴포넌트
+    case "NavigationComponent":
+      return <div className="h-11 flex items-center px-4 border-b border-gray-100"><span className="text-sm">←</span><span className="flex-1 text-center text-sm font-medium">{String(props.title || "미니앱")}</span><span className="text-sm">⋯</span></div>;
+    case "ListRowComponent":
+      return <div className="px-4 py-3 flex items-center border-b border-gray-50"><div className="flex-1"><div className="font-medium text-sm">{String(props.title || "항목")}</div><div className="text-xs text-gray-400 mt-0.5">{String(props.description || "")}</div></div><span className="text-gray-300">›</span></div>;
+    case "TabComponent":
+      return <div className="flex border-b border-gray-100">{((props.tabs as string[]) || ["탭1", "탭2"]).map((t: string, i: number) => <div key={i} className={`flex-1 text-center py-3 text-sm ${i === 0 ? "text-[#3182F6] font-bold border-b-2 border-[#3182F6]" : "text-gray-400"}`}>{t}</div>)}</div>;
+    case "TextFieldComponent":
+      return <div className="px-3 py-2"><label className="block text-xs text-gray-500 mb-1">{String(props.label || "라벨")}</label><input className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm" placeholder={String(props.placeholder || "입력")} readOnly /></div>;
+    case "DialogComponent":
+      return <div className="px-3 py-2"><div className="bg-white rounded-2xl shadow-lg p-6 border text-center"><h3 className="font-bold mb-2">{String(props.title || "알림")}</h3><p className="text-sm text-gray-500 mb-4">{String(props.message || "내용")}</p><button className="px-6 py-2 bg-[#3182F6] text-white rounded-xl text-sm font-medium">{String(props.confirmText || "확인")}</button></div></div>;
+    case "BottomCTAComponent":
+      return <div className="p-3 bg-white border-t"><button className="w-full py-4 bg-[#3182F6] text-white rounded-2xl font-bold">{String(props.text || "다음")}</button></div>;
+    case "SwitchComponent":
+      return <div className="px-3 py-3 flex items-center justify-between"><span className="text-sm">{String(props.label || "설정")}</span><div className="w-12 h-7 bg-[#3182F6] rounded-full flex items-center justify-end px-1"><div className="w-5 h-5 bg-white rounded-full shadow" /></div></div>;
+    case "CheckboxComponent":
+      return <div className="px-3 py-2 flex items-center gap-3"><div className="w-5 h-5 border-2 border-[#3182F6] rounded bg-[#3182F6] flex items-center justify-center text-white text-xs">✓</div><span className="text-sm">{String(props.label || "동의합니다")}</span></div>;
+    case "SkeletonComponent":
+      return <div className="px-3 py-2 space-y-2"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2" /><div className="h-20 bg-gray-200 rounded animate-pulse" /></div>;
+    case "ToastComponent":
+      return <div className="px-3 py-2"><div className="bg-gray-800 text-white text-sm px-4 py-3 rounded-xl text-center">{String(props.message || "완료되었습니다")}</div></div>;
     default:
       return <div className="px-2 py-1 text-gray-400 text-sm">[{resolvedName}]</div>;
   }
