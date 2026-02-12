@@ -7,6 +7,7 @@ import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scro
 import { ComponentPanel } from "@/components/editor/ComponentPanel";
 import { SettingsPanelComponent } from "@/components/editor/SettingsPanel";
 import { Toolbar } from "@/components/editor/Toolbar";
+import { FloatingToolbar } from "@/components/editor/FloatingToolbar";
 import { TextComponent } from "@/components/user/TextComponent";
 import { ButtonComponent } from "@/components/user/ButtonComponent";
 import { ImageComponent } from "@/components/user/ImageComponent";
@@ -131,6 +132,7 @@ export default function EditorPage() {
       <Editor resolver={resolver}>
         <Toolbar viewportWidth={viewportWidth} setViewportWidth={setViewportWidth} darkMode={darkMode} setDarkMode={setDarkMode} tossMode={tossMode} setTossMode={setTossMode} />
         <LoadTemplate />
+        <FloatingToolbar />
         
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel: Desktop always visible, Mobile only when tab selected */}
