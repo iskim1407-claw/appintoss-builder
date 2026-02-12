@@ -1,12 +1,10 @@
 "use client";
 
 import { useEditor } from "@craftjs/core";
-import React from "react";
+import React, { useRef } from "react";
 
 /**
- * 선택된 컴포넌트 위에 플로팅 액션바 표시
- * - 위/아래 이동, 복제, 삭제
- * - 데스크탑 & 모바일 모두 동작
+ * 선택된 컴포넌트 위에 인라인 액션바 표시
  */
 export const FloatingToolbar = () => {
   const { selected, actions, query } = useEditor((state) => {
@@ -25,6 +23,8 @@ export const FloatingToolbar = () => {
     };
   });
 
+  const ref = useRef<HTMLDivElement>(null);
+
   if (!selected) return null;
 
   const getPosition = () => {
@@ -41,7 +41,8 @@ export const FloatingToolbar = () => {
 
   const { index, total } = getPosition();
 
-  const handleMoveUp = () => {
+  const handleMoveUp = (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const parentId = query.node(selected.id).get().data.parent;
       if (parentId && index > 0) {
@@ -50,7 +51,8 @@ export const FloatingToolbar = () => {
     } catch (e) { console.error(e); }
   };
 
-  const handleMoveDown = () => {
+  const handleMoveDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const parentId = query.node(selected.id).get().data.parent;
       if (parentId && index < total - 1) {
@@ -59,7 +61,8 @@ export const FloatingToolbar = () => {
     } catch (e) { console.error(e); }
   };
 
-  const handleDuplicate = () => {
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const nodeTree = query.node(selected.id).toNodeTree();
       const parentId = query.node(selected.id).get().data.parent;
@@ -69,86 +72,79 @@ export const FloatingToolbar = () => {
     } catch (e) { console.error(e); }
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (selected.isDeletable) {
       actions.delete(selected.id);
     }
   };
 
   return (
-    <div className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-2">
-      <div className="flex items-center gap-1 bg-gray-900/95 backdrop-blur-sm text-white rounded-2xl px-2 py-1.5 shadow-xl">
-        {/* 컴포넌트 이름 */}
-        <span className="text-xs font-medium px-2 text-gray-300 max-w-[80px] truncate">
-          {selected.name}
-        </span>
-        
-        <div className="w-px h-5 bg-gray-700" />
-        
-        {/* 위로 */}
-        <button
-          onClick={handleMoveUp}
-          disabled={index <= 0}
-          className="p-2 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition"
-          title="위로 이동"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3L3 8h3v5h4V8h3L8 3z" fill="currentColor"/>
-          </svg>
-        </button>
-        
-        {/* 아래로 */}
-        <button
-          onClick={handleMoveDown}
-          disabled={index >= total - 1}
-          className="p-2 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition"
-          title="아래로 이동"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 13l5-5h-3V3H6v5H3l5 5z" fill="currentColor"/>
-          </svg>
-        </button>
-        
-        <div className="w-px h-5 bg-gray-700" />
-        
-        {/* 복제 */}
-        <button
-          onClick={handleDuplicate}
-          className="p-2 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition"
-          title="복제"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <rect x="5" y="5" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M3 11V3.5A1.5 1.5 0 014.5 2H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        </button>
-        
-        {/* 삭제 */}
-        {selected.isDeletable && (
+    <>
+      {/* 고정 하단 바 — 항상 보임 */}
+      <div 
+        ref={ref}
+        style={{ position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 9999 }}
+      >
+        <div className="flex items-center gap-1 bg-gray-900 text-white rounded-2xl px-3 py-2 shadow-2xl" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
+          <span className="text-xs font-medium px-2 text-gray-300 max-w-[100px] truncate">
+            {selected.name}
+          </span>
+          
+          <div className="w-px h-5 bg-gray-700" />
+          
           <button
-            onClick={handleDelete}
-            className="p-2 rounded-xl hover:bg-red-600 active:bg-red-500 transition"
-            title="삭제"
+            onClick={handleMoveUp}
+            disabled={index <= 0}
+            className="px-3 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition text-sm font-medium"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M5 3V2.5A1.5 1.5 0 016.5 1h3A1.5 1.5 0 0111 2.5V3m-8 0h10m-1 0v9.5a1.5 1.5 0 01-1.5 1.5h-5A1.5 1.5 0 014 12.5V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            ↑ 위로
           </button>
-        )}
-        
-        <div className="w-px h-5 bg-gray-700" />
-        
-        {/* 선택 해제 */}
-        <button
-          onClick={() => actions.selectNode(undefined)}
-          className="p-2 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition"
-          title="선택 해제"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        </button>
+          
+          <button
+            onClick={handleMoveDown}
+            disabled={index >= total - 1}
+            className="px-3 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition text-sm font-medium"
+          >
+            ↓ 아래로
+          </button>
+          
+          <div className="w-px h-5 bg-gray-700" />
+          
+          <button
+            onClick={handleDuplicate}
+            className="px-2 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition text-sm"
+            title="복제"
+          >
+            📋
+          </button>
+          
+          {selected.isDeletable && (
+            <button
+              onClick={handleDelete}
+              className="px-2 py-1.5 rounded-xl hover:bg-red-600 active:bg-red-500 transition text-sm"
+              title="삭제"
+            >
+              🗑️
+            </button>
+          )}
+          
+          <button
+            onClick={(e) => { e.stopPropagation(); actions.selectNode(undefined); }}
+            className="px-2 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition text-sm"
+          >
+            ✕
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
+};
+
+/**
+ * 각 컴포넌트에 감싸는 wrapper — 선택 시 아웃라인 + 상단 라벨
+ * (이건 나중에 각 컴포넌트에 통합 가능)
+ */
+export const NodeToolbar = () => {
+  return null; // placeholder
 };
