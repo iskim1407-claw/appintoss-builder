@@ -22,15 +22,35 @@ body {
   scrollbar-color: #d1d5db transparent;
 }
 
-/* 모바일 터치 드래그 폴리필 */
-[draggable] {
-  -webkit-user-drag: element;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
+/* Craft.js 드래그 지원 */
+[draggable="true"] {
+  cursor: grab;
+}
+[draggable="true"]:active {
+  cursor: grabbing;
 }
 
-.drag-over {
-  outline: 2px dashed var(--toss-blue);
-  outline-offset: -2px;
+/* 에디터 캔버스 내 인터랙티브 요소의 이벤트를 차단 → 드래그 가능하게 */
+[draggable="true"] button,
+[draggable="true"] input,
+[draggable="true"] a,
+[draggable="true"] select,
+[draggable="true"] textarea {
+  pointer-events: none;
+}
+
+/* 드래그 인디케이터 */
+.craftjs-renderer > [draggable="true"] {
+  position: relative;
+}
+.craftjs-renderer > [draggable="true"]:hover::before {
+  content: "⋮⋮";
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #3182F6;
+  opacity: 0.6;
+  letter-spacing: -2px;
 }
