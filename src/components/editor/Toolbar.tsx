@@ -281,7 +281,7 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
       </div>
 
       {/* Mobile Toolbar */}
-      <div className="flex md:hidden h-12 bg-white/90 backdrop-blur-sm border-b border-gray-100/80 items-center justify-between px-3">
+      <div className="flex md:hidden h-14 bg-white/90 backdrop-blur-sm border-b border-gray-100/80 items-center justify-between px-3">
         <div className="flex items-center gap-2">
           <Link href="/" className="text-base font-bold text-[#3182F6]">앱인토스</Link>
           <div className="w-px h-4 bg-gray-200" />
@@ -302,18 +302,18 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
         <div className="flex items-center gap-1">
           <button 
             onClick={() => setTossMode?.(!tossMode)}
-            className={`p-2 rounded-xl transition-smooth ${tossMode ? "text-[#3182F6]" : "text-gray-400"} active:bg-gray-100`}
+            className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl transition-smooth ${tossMode ? "text-[#3182F6]" : "text-gray-400"} active:bg-gray-100`}
             title="토스 심사 모드"
           >
-            {tossMode ? <Check size={16} /> : <span className="text-xs font-bold">T</span>}
+            {tossMode ? <Check size={18} /> : <span className="text-sm font-bold">T</span>}
           </button>
-          <button onClick={handleSave} className="p-2 rounded-xl text-gray-500 active:bg-gray-100 transition-smooth" title="저장">
-            <Save size={16} />
+          <button onClick={handleSave} className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-500 active:bg-gray-100 transition-smooth" title="저장">
+            <Save size={18} />
           </button>
           <div className="relative">
             <button 
               onClick={handleExport} 
-              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium transition-smooth"
+              className="flex items-center gap-1 px-4 py-2.5 text-sm rounded-xl bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium transition-smooth min-h-[44px]"
             >
               <Download size={13} />
               내보내기
