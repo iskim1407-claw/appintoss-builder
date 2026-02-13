@@ -462,13 +462,13 @@ export default function SecurityPage() {
     let content = "";
 
     if (format === "md") {
-      content = `# 🔒 보안 점검 리포트
+      content = `# 보안 점검 리포트
 
 **생성일시**: ${now}
 
 ---
 
-## 📊 총점
+## 총점
 
 | 등급 | 점수 | 백분율 |
 |------|------|--------|
@@ -476,13 +476,13 @@ export default function SecurityPage() {
 
 ---
 
-## 📋 상세 점검 결과
+## 상세 점검 결과
 
 `;
       securityChecks.forEach((check) => {
         const state = checkState[check.id];
         const score = state?.score || 0;
-        const status = score >= check.maxScore * 0.7 ? "✅" : score > 0 ? "⚠️" : "❌";
+        const status = score >= check.maxScore * 0.7 ? "[PASS]" : score > 0 ? "[WARN]" : "[FAIL]";
 
         content += `### ${status} ${check.name}\n\n`;
         content += `- **점수**: ${score}/${check.maxScore}점\n`;
@@ -499,7 +499,7 @@ export default function SecurityPage() {
 
       content += `---
 
-## 📝 권장 조치사항
+## 권장 조치사항
 
 `;
       securityChecks.forEach((check) => {
@@ -603,13 +603,13 @@ export default function SecurityPage() {
               href="/security"
               className="text-sm text-[#3182F6] font-medium"
             >
-              🔒 보안점검
+              보안점검
             </Link>
             <Link
               href="/documents"
               className="text-sm text-gray-600 hover:text-gray-900"
             >
-              📄 문서
+              문서
             </Link>
             <Link
               href="/editor"
@@ -625,7 +625,7 @@ export default function SecurityPage() {
       <section className="pt-28 pb-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            🔒 보안 자동 점검
+            보안 자동 점검
           </h1>
           <p className="text-gray-500 max-w-2xl mx-auto">
             토스 미니앱 심사에 필요한 보안 요구사항을 점검하고
@@ -684,7 +684,7 @@ export default function SecurityPage() {
 
                 {item.helpText && (
                   <p className="text-xs text-gray-400 mt-4 flex items-center gap-1">
-                    <span>💡</span> {item.helpText}
+                    <span></span> {item.helpText}
                   </p>
                 )}
               </div>
@@ -719,20 +719,20 @@ export default function SecurityPage() {
               {/* 리포트 다운로드 */}
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <h3 className="font-bold text-gray-700 mb-4">
-                  📄 리포트 다운로드
+                  리포트 다운로드
                 </h3>
                 <div className="space-y-3">
                   <button
                     onClick={() => generateReport("md")}
                     className="w-full py-3 bg-[#3182F6] text-white rounded-xl hover:bg-[#1B64DA] transition font-medium"
                   >
-                    📝 Markdown (.md)
+                    Markdown (.md)
                   </button>
                   <button
                     onClick={() => generateReport("txt")}
                     className="w-full py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition font-medium"
                   >
-                    📄 텍스트 (.txt)
+                    텍스트 (.txt)
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 mt-3 text-center">

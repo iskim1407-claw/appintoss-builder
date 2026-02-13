@@ -2,6 +2,7 @@
 
 import { useEditor } from "@craftjs/core";
 import React from "react";
+import { MousePointerClick } from "lucide-react";
 
 interface SettingsPanelProps {
   isMobile?: boolean;
@@ -112,7 +113,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
                   className="flex-1 py-2.5 text-sm bg-gray-100 active:bg-gray-200 rounded-xl transition"
                   title="복제"
                 >
-                  📋 복제
+                  복제
                 </button>
               </div>
             </div>
@@ -129,7 +130,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
                   onClick={() => actions.delete(selected.id)}
                   className="w-full py-3 text-base text-red-500 border border-red-200 rounded-xl active:bg-red-50 transition font-medium"
                 >
-                  🗑️ 컴포넌트 삭제
+                  컴포넌트 삭제
                 </button>
               </div>
             )}
@@ -137,7 +138,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
         ) : (
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="text-center text-gray-400">
-              <div className="text-5xl mb-4">👆</div>
+              <div className="text-5xl mb-4"><MousePointerClick size={48} className="text-gray-300 mx-auto" /></div>
               <p className="text-base font-medium mb-2">컴포넌트를 선택하세요</p>
               <p className="text-sm">캔버스에서 컴포넌트를 탭하면<br />여기서 편집할 수 있어요</p>
             </div>
@@ -185,7 +186,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
                 className="flex-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition"
                 title="복제"
               >
-                📋 복제
+                복제
               </button>
             </div>
           </div>
@@ -202,7 +203,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
                 onClick={() => actions.delete(selected.id)}
                 className="w-full py-2.5 text-sm text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition"
               >
-                🗑️ 컴포넌트 삭제
+                컴포넌트 삭제
               </button>
             </div>
           )}
@@ -210,7 +211,7 @@ export const SettingsPanelComponent = ({ isMobile = false }: SettingsPanelProps)
       ) : (
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center text-gray-400">
-            <div className="text-4xl mb-3">👆</div>
+            <div className="text-4xl mb-3"><MousePointerClick size={40} className="text-gray-300 mx-auto" /></div>
             <p className="text-sm font-medium mb-1">컴포넌트를 선택하세요</p>
             <p className="text-xs">캔버스에서 컴포넌트를 클릭하면<br />여기서 편집할 수 있어요</p>
           </div>

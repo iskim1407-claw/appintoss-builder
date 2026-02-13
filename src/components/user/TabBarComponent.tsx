@@ -4,6 +4,22 @@ import { useNode } from "@craftjs/core";
 import React, { useState } from "react";
 import { SettingsPanel } from "./shared";
 import { TDS_COLORS, TDS_RADIUS, TDS_SHADOWS } from "@/lib/tds/tokens";
+import { Home, Search, Heart, User, Star, ShoppingBag, Bell, Settings, Menu, Bookmark, MessageCircle, Wallet, type LucideIcon } from "lucide-react";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  home: Home, search: Search, heart: Heart, user: User, star: Star,
+  shop: ShoppingBag, bell: Bell, settings: Settings, menu: Menu,
+  bookmark: Bookmark, chat: MessageCircle, wallet: Wallet,
+};
+
+const ICON_OPTIONS = Object.keys(ICON_MAP);
+
+function TabIcon({ icon, size, color }: { icon: string; size: number; color: string }) {
+  const LucideComp = ICON_MAP[icon];
+  if (LucideComp) return <LucideComp size={size} color={color} strokeWidth={1.8} />;
+  // fallback: treat as emoji
+  return <span style={{ fontSize: size, lineHeight: 1 }}>{icon}</span>;
+}
 
 interface Tab {
   icon: string;
@@ -20,10 +36,10 @@ export interface TDSTabbarProps {
 }
 
 const defaultTabs: Tab[] = [
-  { icon: "🏠", label: "홈", pageId: "home" },
-  { icon: "🔍", label: "검색", pageId: "search" },
-  { icon: "❤️", label: "찜", pageId: "favorites" },
-  { icon: "👤", label: "마이", pageId: "my" },
+  { icon: "home", label: "홈", pageId: "home" },
+  { icon: "search", label: "검색", pageId: "search" },
+  { icon: "heart", label: "찜", pageId: "favorites" },
+  { icon: "user", label: "마이", pageId: "my" },
 ];
 
 export const TabBarComponent = ({
@@ -68,7 +84,7 @@ export const TabBarComponent = ({
               color: active === i ? TDS_COLORS.blue : TDS_COLORS.gray400,
             }}
           >
-            <span className={isFloating ? "text-2xl" : "text-xl"}>{tab.icon}</span>
+            <TabIcon icon={tab.icon} size={isFloating ? 26 : 22} color={active === i ? TDS_COLORS.blue : TDS_COLORS.gray400} />
             {showLabels && (
               <span
                 className="text-[10px] font-medium"
@@ -101,7 +117,7 @@ const TabBarSettings = () => {
   const addTab = () => {
     setProp((p: TDSTabbarProps) => {
       const newTabs = [...(p.tabs || defaultTabs)];
-      newTabs.push({ icon: "⭐", label: "새 탭", pageId: `tab_${newTabs.length}` });
+      newTabs.push({ icon: "star", label: "새 탭", pageId: `tab_${newTabs.length}` });
       p.tabs = newTabs;
     });
   };
@@ -151,12 +167,15 @@ const TabBarSettings = () => {
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <input
+              <select
                 className="border rounded-lg p-1.5 text-sm"
-                placeholder="아이콘"
-                value={tab.icon}
+                value={ICON_OPTIONS.includes(tab.icon) ? tab.icon : ""}
                 onChange={(e) => updateTab(i, "icon", e.target.value)}
-              />
+              >
+                {ICON_OPTIONS.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
               <input
                 className="border rounded-lg p-1.5 text-sm"
                 placeholder="라벨"

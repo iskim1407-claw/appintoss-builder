@@ -109,7 +109,7 @@ export const ProductCompareComponent = ({
 
               {/* 혜택 */}
               <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
-                <span>🎁</span>
+                <span className="text-sm font-bold text-green-500">Bonus</span>
                 <span>{product.benefit}</span>
               </div>
 

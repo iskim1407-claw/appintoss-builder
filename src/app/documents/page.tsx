@@ -98,7 +98,7 @@ export default function DocumentsPage() {
               템플릿
             </Link>
             <Link href="/documents" className="text-sm text-[#3182F6] font-medium">
-              📄 문서
+              문서
             </Link>
             <Link
               href="/editor"
@@ -114,7 +114,7 @@ export default function DocumentsPage() {
         <div className="max-w-6xl mx-auto">
           {/* 헤더 */}
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold mb-3">📄 심사용 문서 생성기</h1>
+            <h1 className="text-3xl font-bold mb-3">심사용 문서 생성기</h1>
             <p className="text-gray-500">
               토스 미니앱 심사에 필요한 개인정보처리방침과 이용약관을 자동으로 생성합니다.
             </p>
@@ -330,7 +330,7 @@ export default function DocumentsPage() {
                       : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
-                  🔒 개인정보처리방침
+                  개인정보처리방침
                 </button>
                 <button
                   onClick={() => setActiveTab("terms")}
@@ -340,7 +340,7 @@ export default function DocumentsPage() {
                       : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
-                  📋 이용약관
+                  이용약관
                 </button>
               </div>
 
@@ -391,7 +391,7 @@ export default function DocumentsPage() {
                   disabled={!isFormValid}
                   className="flex-1 py-3 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  📋 복사하기
+                  복사하기
                 </button>
                 <button
                   onClick={downloadDocument}
@@ -410,7 +410,7 @@ export default function DocumentsPage() {
 
               {/* 안내 */}
               <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-                <h3 className="font-medium text-[#3182F6] mb-2">💡 사용 안내</h3>
+                <h3 className="font-medium text-[#3182F6] mb-2">사용 안내</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• 생성된 문서는 마크다운(.md) 형식입니다</li>
                   <li>• 토스 미니앱 설정 페이지에 붙여넣기 하세요</li>

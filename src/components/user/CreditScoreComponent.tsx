@@ -124,7 +124,7 @@ export const CreditScoreComponent = ({
         {/* 점수 향상 팁 */}
         <div className="bg-blue-50 rounded-xl p-4 mt-4">
           <div className="flex items-start gap-3">
-            <span className="text-xl">💡</span>
+            <span className="text-xl font-bold text-blue-500">i</span>
             <div>
               <p className="text-sm font-medium text-gray-800">점수 올리는 방법</p>
               <p className="text-xs text-gray-500 mt-1">정기적인 금융거래와 연체 없는 상환이 중요해요</p>

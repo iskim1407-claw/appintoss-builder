@@ -484,6 +484,33 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 `;
 }
 
+function genPoweredByBadge(): string {
+  return `function PoweredByBadge() {
+  return (
+    <a
+      href="https://appintoss-builder.vercel.app"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        position: 'fixed',
+        bottom: '8px',
+        right: '8px',
+        background: '#3182F6',
+        color: 'white',
+        padding: '4px 8px',
+        borderRadius: '12px',
+        fontSize: '11px',
+        textDecoration: 'none',
+        opacity: 0.7,
+        zIndex: 9999,
+      }}
+    >
+      ⚡ 앱인토스 빌더로 제작
+    </a>
+  );
+}`;
+}
+
 function genAppTsx(json: string): string {
   let nodes: NodesMap;
   try {
@@ -497,10 +524,13 @@ function genAppTsx(json: string): string {
 
   return `import React from 'react';
 
+${genPoweredByBadge()}
+
 function App() {
   return (
     <div className="app-container">
 ${jsx}
+      <PoweredByBadge />
     </div>
   );
 }
@@ -602,7 +632,7 @@ npm run build
 
 \`dist/\` 폴더에 빌드 결과물이 생성됩니다.
 
-## 📦 앱인토스 배포
+## 앱인토스 배포
 
 1. \`npm run build\` 실행
 2. [앱인토스 콘솔](https://apps-in-toss.toss.im) 접속

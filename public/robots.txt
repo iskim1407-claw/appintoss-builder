@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /security/
+
+Sitemap: https://appintoss.com/sitemap.xml

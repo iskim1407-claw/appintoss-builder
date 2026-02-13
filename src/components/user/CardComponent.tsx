@@ -23,7 +23,7 @@ export const CardComponent = ({
     <div ref={(ref) => { if (ref) connect(drag(ref)); }} className={`px-3 py-2 ${selected ? "outline outline-2 outline-[#3182F6] rounded-lg" : ""}`}>
       <div className="rounded-2xl border border-gray-100 overflow-hidden shadow-sm" style={{ backgroundColor: bgColor }}>
         {showImage && (
-          <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center text-3xl">📷</div>
+          <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center text-sm text-gray-400">이미지</div>
         )}
         <div className="p-4">
           <h3 className="font-bold text-base mb-1">{title}</h3>

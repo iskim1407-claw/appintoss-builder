@@ -763,6 +763,255 @@ body {
   color: var(--toss-gray-600);
   cursor: pointer;
 }
+
+/* Quiz/Test Components */
+.quiz-intro {
+  text-align: center;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-height: 70vh;
+  justify-content: center;
+}
+.quiz-intro-emoji {
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.quiz-intro-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--toss-gray-900);
+  margin: 0;
+  line-height: 1.3;
+}
+.quiz-intro-subtitle {
+  font-size: 16px;
+  color: var(--toss-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+.quiz-intro-btn {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 280px;
+  padding: 16px 24px;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  background: var(--toss-blue);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.quiz-intro-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.quiz-question {
+  padding: 24px 20px;
+}
+.quiz-progress {
+  margin-bottom: 24px;
+}
+.quiz-progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--toss-gray-500);
+}
+.quiz-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--toss-gray-100);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--toss-blue);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.quiz-question-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--toss-gray-900);
+  line-height: 1.4;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.quiz-option {
+  width: 100%;
+  padding: 18px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--toss-gray-800);
+  background: var(--toss-gray-50);
+  border: 1px solid var(--toss-gray-200);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+.quiz-option:active {
+  background: var(--toss-blue);
+  color: white;
+  border-color: var(--toss-blue);
+  transform: scale(0.98);
+}
+.quiz-option.selected {
+  background: var(--toss-blue);
+  color: white;
+  border-color: var(--toss-blue);
+}
+
+.quiz-result {
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 8px;
+  background: var(--bg-primary);
+}
+.quiz-result-header {
+  padding: 32px 24px;
+  text-align: center;
+  color: white;
+}
+.quiz-result-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+.quiz-result-code {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.quiz-result-type {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0 0;
+}
+.quiz-result-content {
+  padding: 24px 20px;
+}
+.quiz-result-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--toss-gray-900);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.quiz-result-desc {
+  font-size: 15px;
+  color: var(--toss-gray-700);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.quiz-result-traits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.quiz-trait {
+  padding: 16px;
+  border-radius: 12px;
+}
+.quiz-strengths {
+  background: #ECFDF5;
+}
+.quiz-strengths h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #059669;
+  margin-bottom: 12px;
+}
+.quiz-strengths li {
+  font-size: 13px;
+  color: #065F46;
+  padding: 4px 0;
+  list-style: none;
+}
+.quiz-weaknesses {
+  background: #FEF3F2;
+}
+.quiz-weaknesses h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #DC2626;
+  margin-bottom: 12px;
+}
+.quiz-weaknesses li {
+  font-size: 13px;
+  color: #991B1B;
+  padding: 4px 0;
+  list-style: none;
+}
+.quiz-trait ul {
+  padding: 0;
+  margin: 0;
+}
+.quiz-tip {
+  padding: 16px;
+  background: var(--toss-blue-light, #E8F3FF);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+.quiz-tip h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--toss-blue);
+  margin-bottom: 8px;
+}
+.quiz-tip p {
+  font-size: 14px;
+  color: var(--toss-gray-700);
+  line-height: 1.6;
+  margin: 0;
+}
+.quiz-result-buttons {
+  display: flex;
+  gap: 12px;
+}
+.quiz-btn-retry {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--toss-gray-700);
+  background: var(--toss-gray-100);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.quiz-btn-retry:active {
+  opacity: 0.8;
+}
+.quiz-btn-share {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.quiz-btn-share:active {
+  opacity: 0.9;
+}
 `;
 
 // 앱인토스 SDK 스텁 + bridge API
@@ -1347,6 +1596,145 @@ function renderComponent(node: NodeData, nodes: NodesMap, nodeId: string): strin
       </div>${childrenHtml}`;
     }
     
+    // 퀴즈/테스트 컴포넌트
+    case 'QuizIntroComponent': {
+      const title = escapeHtml(String(props.title || '나는 어떤 유형일까?'));
+      const subtitle = escapeHtml(String(props.subtitle || '간단한 질문에 답하고\n나의 유형을 알아보세요')).replace(/\n/g, '<br>');
+      const emoji = props.emoji || '🧠';
+      const buttonText = escapeHtml(String(props.buttonText || '테스트 시작하기'));
+      const nextPageId = props.nextPageId || '';
+      const emojiSize = Number(props.emojiSize) || 80;
+      
+      const onclick = nextPageId 
+        ? `onclick="quizStart(); bridge.navigateTo('${escapeHtml(String(nextPageId))}')"` 
+        : `onclick="quizStart()"`;
+      
+      return `<div class="quiz-intro">
+        <div class="quiz-intro-emoji" style="font-size:${emojiSize}px">${emoji}</div>
+        <h1 class="quiz-intro-title">${title}</h1>
+        <p class="quiz-intro-subtitle">${subtitle}</p>
+        <button class="quiz-intro-btn" ${onclick}>${buttonText}</button>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'QuizQuestionComponent': {
+      const questionNumber = Number(props.questionNumber) || 1;
+      const totalQuestions = Number(props.totalQuestions) || 5;
+      const questionText = escapeHtml(String(props.questionText || '질문'));
+      const showProgress = props.showProgress !== false;
+      const options = (props.options as Array<{text: string; scoreKey: string; scoreValue: number; nextPageId?: string}>) || [];
+      const progress = (questionNumber / totalQuestions) * 100;
+      
+      const progressHtml = showProgress ? `
+        <div class="quiz-progress">
+          <div class="quiz-progress-label">
+            <span>Q${questionNumber}</span>
+            <span>${questionNumber} / ${totalQuestions}</span>
+          </div>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" style="width:${progress}%"></div>
+          </div>
+        </div>
+      ` : '';
+      
+      const optionsHtml = options.map((opt) => {
+        const optText = escapeHtml(opt.text);
+        const nextPage = opt.nextPageId || '';
+        return `<button class="quiz-option" onclick="selectAnswer('${escapeHtml(opt.scoreKey)}', ${opt.scoreValue}, '${escapeHtml(nextPage)}')">${optText}</button>`;
+      }).join('');
+      
+      return `<div class="quiz-question" data-question="${questionNumber}">
+        ${progressHtml}
+        <h2 class="quiz-question-text">${questionText}</h2>
+        <div class="quiz-options">${optionsHtml}</div>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'QuizResultComponent': {
+      const typeCode = escapeHtml(String(props.typeCode || 'INFP'));
+      const typeName = escapeHtml(String(props.typeName || '유형명'));
+      const emoji = props.emoji || '🦋';
+      const title = escapeHtml(String(props.title || '당신의 유형'));
+      const description = escapeHtml(String(props.description || ''));
+      const strengths = (props.strengths as string[]) || [];
+      const weaknesses = (props.weaknesses as string[]) || [];
+      const tip = escapeHtml(String(props.tip || ''));
+      const accentColor = props.accentColor || '#6366F1';
+      const showShare = props.showShare !== false;
+      const showRetry = props.showRetry !== false;
+      const retryPageId = props.retryPageId || '';
+      
+      const strengthsHtml = strengths.map(s => `<li>• ${escapeHtml(s)}</li>`).join('');
+      const weaknessesHtml = weaknesses.map(w => `<li>• ${escapeHtml(w)}</li>`).join('');
+      
+      const retryOnclick = retryPageId 
+        ? `onclick="quizReset(); bridge.navigateTo('${escapeHtml(String(retryPageId))}')"` 
+        : `onclick="quizReset(); location.reload()"`;
+      
+      return `<div class="quiz-result" data-type-code="${typeCode}">
+        <div class="quiz-result-header" style="background:${accentColor}">
+          <div class="quiz-result-emoji">${emoji}</div>
+          <div class="quiz-result-code">${typeCode}</div>
+          <h1 class="quiz-result-type">${typeName}</h1>
+        </div>
+        <div class="quiz-result-content">
+          <h2 class="quiz-result-title">${title}</h2>
+          <p class="quiz-result-desc">${description}</p>
+          <div class="quiz-result-traits">
+            <div class="quiz-trait quiz-strengths">
+              <h3>💪 강점</h3>
+              <ul>${strengthsHtml}</ul>
+            </div>
+            <div class="quiz-trait quiz-weaknesses">
+              <h3>😅 약점</h3>
+              <ul>${weaknessesHtml}</ul>
+            </div>
+          </div>
+          ${tip ? `<div class="quiz-tip"><h3>💡 꿀팁</h3><p>${tip}</p></div>` : ''}
+          <div class="quiz-result-buttons">
+            ${showRetry ? `<button class="quiz-btn-retry" ${retryOnclick}>다시 하기</button>` : ''}
+            ${showShare ? `<button class="quiz-btn-share" style="background:${accentColor}" onclick="shareResult()">공유하기 📤</button>` : ''}
+          </div>
+          <a href="https://appintoss-builder.vercel.app?ref=quiz" target="_blank" 
+             style="display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--toss-gray-400);text-decoration:none;">
+            나도 만들어보기 →
+          </a>
+        </div>
+      </div>${childrenHtml}`;
+    }
+    
+    case 'GridComponent': {
+      const columns = Number(props.columns) || 3;
+      const gap = Number(props.gap) || 8;
+      const items = (props.items as Array<{text: string; emoji?: string; bgColor?: string; onClick?: string}>) || [];
+      const cellHeight = Number(props.cellHeight) || 80;
+      const cellBorderRadius = Number(props.cellBorderRadius) || 12;
+      const cellBgColor = props.cellBgColor || '#F2F4F6';
+      const cellTextColor = props.cellTextColor || '#191F28';
+      const fontSize = Number(props.fontSize) || 14;
+      const selectable = !!props.selectable;
+      const selectedBgColor = props.selectedBgColor || '#3182F6';
+      const selectedTextColor = props.selectedTextColor || '#FFFFFF';
+      const gridId = `grid_${nodeId}`;
+
+      const cellsHtml = items.map((item, i) => {
+        const bg = item.bgColor || cellBgColor;
+        const onclick = selectable
+          ? `onclick="toggleGridCell('${gridId}', ${i}, '${bg}', '${cellTextColor}', '${selectedBgColor}', '${selectedTextColor}')"`
+          : item.onClick ? `onclick="${escapeHtml(String(item.onClick))}"` : '';
+        return `<div class="grid-cell" id="${gridId}_${i}" style="height:${cellHeight}px;border-radius:${cellBorderRadius}px;background:${bg};color:${cellTextColor};font-size:${fontSize}px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:${selectable ? 'pointer' : 'default'};transition:all 0.2s ease;user-select:none;gap:4px" ${onclick}>
+          ${item.emoji ? `<span style="font-size:${fontSize + 4}px">${item.emoji}</span>` : ''}
+          <span style="font-weight:500">${escapeHtml(item.text)}</span>
+        </div>`;
+      }).join('');
+
+      return `<div style="padding:8px 0">
+        <div id="${gridId}" style="display:grid;grid-template-columns:repeat(${columns},1fr);gap:${gap}px">
+          ${cellsHtml}
+        </div>
+      </div>${childrenHtml}`;
+    }
+
     case 'Canvas':
     default:
       return `<div class="content-area">${childrenHtml}</div>`;
@@ -1472,6 +1860,22 @@ document.addEventListener('appintoss:navigate', function(e) {
   showPage(e.detail.pageId);
 });
 
+// Grid toggle
+var gridSelected = {};
+function toggleGridCell(gridId, index, defaultBg, defaultColor, selectedBg, selectedColor) {
+  var key = gridId + '_' + index;
+  var cell = document.getElementById(key);
+  if (!cell) return;
+  gridSelected[key] = !gridSelected[key];
+  if (gridSelected[key]) {
+    cell.style.background = selectedBg;
+    cell.style.color = selectedColor;
+  } else {
+    cell.style.background = defaultBg;
+    cell.style.color = defaultColor;
+  }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
   initCarousels();
@@ -1513,6 +1917,82 @@ function selectBank(code) {
   document.querySelectorAll('.account-bank-btn').forEach(function(btn) {
     btn.style.border = btn.querySelector('[onclick*="' + code + '"]') ? '2px solid var(--toss-blue)' : 'none';
   });
+}
+
+// Quiz/Test Logic
+var quizScores = {};
+
+function quizStart() {
+  quizScores = {};
+  console.log('[Quiz] Started');
+}
+
+function selectAnswer(scoreKey, scoreValue, nextPageId) {
+  // 점수 누적
+  if (!quizScores[scoreKey]) {
+    quizScores[scoreKey] = 0;
+  }
+  quizScores[scoreKey] += scoreValue;
+  console.log('[Quiz] Score:', scoreKey, '+', scoreValue, '| Total:', quizScores);
+  
+  // 선택 피드백 (선택한 버튼 하이라이트)
+  var btn = event.target;
+  btn.classList.add('selected');
+  
+  // 다음 페이지로 이동 (약간의 딜레이)
+  if (nextPageId) {
+    setTimeout(function() {
+      bridge.navigateTo(nextPageId);
+    }, 200);
+  }
+}
+
+function quizReset() {
+  quizScores = {};
+  console.log('[Quiz] Reset');
+}
+
+function getQuizResult() {
+  // 가장 높은 점수 키 찾기
+  var maxKey = null;
+  var maxScore = -Infinity;
+  for (var key in quizScores) {
+    if (quizScores[key] > maxScore) {
+      maxScore = quizScores[key];
+      maxKey = key;
+    }
+  }
+  return { key: maxKey, score: maxScore, all: quizScores };
+}
+
+function shareResult() {
+  var resultEl = document.querySelector('.quiz-result');
+  var typeCode = resultEl ? resultEl.dataset.typeCode : '';
+  var typeName = resultEl ? resultEl.querySelector('.quiz-result-type').textContent : '';
+  
+  var shareText = '나의 유형은 ' + typeCode + ' - ' + typeName + '!';
+  
+  if (navigator.share) {
+    navigator.share({
+      title: shareText,
+      text: shareText + ' 나도 테스트 해보기 👇',
+      url: location.href
+    }).catch(function() {});
+  } else {
+    // 클립보드 복사 fallback
+    navigator.clipboard.writeText(shareText + ' ' + location.href).then(function() {
+      bridge.toast('링크가 복사되었습니다!');
+    });
+  }
+}
+
+// 퀴즈 결과 조건부 표시 (점수 기반)
+function showResultByScore(scoreMapping) {
+  // scoreMapping: { 'E': 'result_E', 'I': 'result_I', ... }
+  var result = getQuizResult();
+  if (result.key && scoreMapping[result.key]) {
+    bridge.navigateTo(scoreMapping[result.key]);
+  }
 }
 `;
 
@@ -1576,6 +2056,14 @@ export function generateHTML(json: string, options: GenerateOptions = {}): strin
   </div>
   
   <div class="toast-container"></div>
+  
+  <!-- Powered by 앱인토스 빌더 -->
+  <a href="https://appintoss-builder.vercel.app" target="_blank" 
+     style="position:fixed;bottom:8px;right:8px;background:#3182F6;color:white;
+            padding:4px 8px;border-radius:12px;font-size:11px;text-decoration:none;
+            opacity:0.7;z-index:9999;">
+    ⚡ 앱인토스 빌더로 제작
+  </a>
   
   <script>
     ${tossModeScript}
@@ -1658,6 +2146,14 @@ export function generateMultiPageHTML(pages: Array<{ id: string; name: string; j
   </div>
   
   <div class="toast-container"></div>
+  
+  <!-- Powered by 앱인토스 빌더 -->
+  <a href="https://appintoss-builder.vercel.app" target="_blank" 
+     style="position:fixed;bottom:8px;right:8px;background:#3182F6;color:white;
+            padding:4px 8px;border-radius:12px;font-size:11px;text-decoration:none;
+            opacity:0.7;z-index:9999;">
+    ⚡ 앱인토스 빌더로 제작
+  </a>
   
   <script>
     ${tossModeScript}

@@ -50,11 +50,11 @@ export const ButtonComponent = ({
     switch (action) {
       case "link": return "🔗";
       case "pay": return "💳";
-      case "share": return "📤";
+      case "share": return "";
       case "toast": return "💬";
       case "back": return "←";
       case "navigate": return "📄";
-      case "bottomSheet": return "📋";
+      case "bottomSheet": return "";
       default: return null;
     }
   };
@@ -218,11 +218,11 @@ const ButtonSettings = () => {
           <option value="none">없음</option>
           <option value="link">🔗 링크 열기</option>
           <option value="pay">💳 토스페이 결제</option>
-          <option value="share">📤 공유하기</option>
+          <option value="share">공유하기</option>
           <option value="toast">💬 토스트 메시지</option>
           <option value="back">← 뒤로가기</option>
           <option value="navigate">📄 페이지 이동</option>
-          <option value="bottomSheet">📋 바텀시트 열기</option>
+          <option value="bottomSheet">바텀시트 열기</option>
         </select>
 
         {props.action === "link" && (

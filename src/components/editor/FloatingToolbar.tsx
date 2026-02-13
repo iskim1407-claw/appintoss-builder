@@ -2,6 +2,7 @@
 
 import { useEditor } from "@craftjs/core";
 import React, { useRef } from "react";
+import { ArrowUp, ArrowDown, Copy, Trash2, X } from "lucide-react";
 
 /**
  * 선택된 컴포넌트 위에 인라인 액션바 표시
@@ -81,59 +82,68 @@ export const FloatingToolbar = () => {
 
   return (
     <>
-      {/* 고정 하단 바 — 항상 보임 */}
+      {/* 고정 하단 바 — 글래스모피즘 */}
       <div 
         ref={ref}
-        style={{ position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 9999 }}
+        style={{ position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)", zIndex: 9999 }}
+        className="animate-slide-up"
       >
-        <div className="flex items-center gap-1 bg-gray-900 text-white rounded-2xl px-3 py-2 shadow-2xl" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
-          <span className="text-xs font-medium px-2 text-gray-300 max-w-[100px] truncate">
+        <div 
+          className="flex items-center gap-0.5 rounded-2xl px-2 py-1.5 glass-dark"
+          style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.35)" }}
+        >
+          <span className="text-xs font-medium px-2.5 py-1 text-gray-400 max-w-[120px] truncate">
             {selected.name}
           </span>
           
-          <div className="w-px h-5 bg-gray-700" />
+          <div className="w-px h-5 bg-white/10 mx-0.5" />
           
           <button
             onClick={handleMoveUp}
             disabled={index <= 0}
-            className="px-3 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition text-sm font-medium"
+            className="p-2 rounded-xl hover:bg-white/10 active:bg-white/15 disabled:opacity-25 transition-smooth text-white"
+            title="위로"
           >
-            ↑ 위로
+            <ArrowUp size={15} />
           </button>
           
           <button
             onClick={handleMoveDown}
             disabled={index >= total - 1}
-            className="px-3 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 disabled:opacity-30 transition text-sm font-medium"
+            className="p-2 rounded-xl hover:bg-white/10 active:bg-white/15 disabled:opacity-25 transition-smooth text-white"
+            title="아래로"
           >
-            ↓ 아래로
+            <ArrowDown size={15} />
           </button>
           
-          <div className="w-px h-5 bg-gray-700" />
+          <div className="w-px h-5 bg-white/10 mx-0.5" />
           
           <button
             onClick={handleDuplicate}
-            className="px-2 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition text-sm"
+            className="p-2 rounded-xl hover:bg-white/10 active:bg-white/15 transition-smooth text-white"
             title="복제"
           >
-            📋
+            <Copy size={15} />
           </button>
           
           {selected.isDeletable && (
             <button
               onClick={handleDelete}
-              className="px-2 py-1.5 rounded-xl hover:bg-red-600 active:bg-red-500 transition text-sm"
+              className="p-2 rounded-xl hover:bg-red-500/20 active:bg-red-500/30 transition-smooth text-red-400"
               title="삭제"
             >
-              🗑️
+              <Trash2 size={15} />
             </button>
           )}
           
+          <div className="w-px h-5 bg-white/10 mx-0.5" />
+          
           <button
             onClick={(e) => { e.stopPropagation(); actions.selectNode(undefined); }}
-            className="px-2 py-1.5 rounded-xl hover:bg-gray-700 active:bg-gray-600 transition text-sm"
+            className="p-2 rounded-xl hover:bg-white/10 active:bg-white/15 transition-smooth text-gray-400"
+            title="닫기"
           >
-            ✕
+            <X size={15} />
           </button>
         </div>
       </div>

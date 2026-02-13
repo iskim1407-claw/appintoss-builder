@@ -3,8 +3,16 @@
 import { useEditor } from "@craftjs/core";
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { generateHTML } from "@/lib/htmlGenerator";
 import { generateAitProject } from "@/lib/aitExportGenerator";
+import { PreviewPanel } from "./PreviewPanel";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+import {
+  Undo2, Redo2, Smartphone, Sun, Moon, FolderOpen, Save, Eye,
+  Download, FileCode, Package, ChevronDown, Check, PartyPopper
+} from "lucide-react";
 
 interface ViewportSize {
   name: string;
@@ -41,7 +49,6 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
   const [projectName, setProjectName] = useState("내 미니앱");
   const [lastExportType, setLastExportType] = useState<'html' | 'sdk'>('html');
 
-  // Load project name from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("appintoss-project-name");
     if (saved) setProjectName(saved);
@@ -51,11 +58,11 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     const json = query.serialize();
     localStorage.setItem("appintoss-save", json);
     localStorage.setItem("appintoss-project-name", projectName);
-    
-    // Show toast notification
+    track("project_saved", { projectName });
+
     const toast = document.createElement("div");
-    toast.className = "fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium z-50 animate-fade-in";
-    toast.textContent = "✓ 저장되었습니다";
+    toast.className = "fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 glass-dark text-white px-4 py-2.5 rounded-2xl text-sm font-medium z-50 animate-fade-in-up flex items-center gap-2";
+    toast.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 저장되었습니다`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
   }, [query, projectName]);
@@ -68,8 +75,8 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
       if (savedName) setProjectName(savedName);
       
       const toast = document.createElement("div");
-      toast.className = "fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium z-50";
-      toast.textContent = "✓ 불러왔습니다";
+      toast.className = "fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 glass-dark text-white px-4 py-2.5 rounded-2xl text-sm font-medium z-50 animate-fade-in-up flex items-center gap-2";
+      toast.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 불러왔습니다`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 2000);
     } else {
@@ -81,15 +88,13 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     const json = query.serialize();
     const html = generateHTML(json, { darkMode, projectName, tossMode });
 
-    const JSZip = (await import("jszip")).default;
-    const { saveAs } = await import("file-saver");
-
     const zip = new JSZip();
     zip.file("index.html", html);
     zip.file("README.md", `# ${projectName}\n\n이 파일을 앱인토스 콘솔에 업로드하세요.\n\n---\n앱인토스 빌더로 제작됨\n`);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, `${projectName.replace(/\s+/g, "-").toLowerCase()}.zip`);
+    track("export_html", { projectName });
     setLastExportType('html');
     setShowExport(true);
     setShowExportMenu(false);
@@ -99,9 +104,6 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     const json = query.serialize();
     const files = generateAitProject(json, projectName);
 
-    const JSZip = (await import("jszip")).default;
-    const { saveAs } = await import("file-saver");
-
     const zip = new JSZip();
     for (const [path, content] of Object.entries(files)) {
       zip.file(path, content);
@@ -109,6 +111,7 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, `${projectName.replace(/\s+/g, "-").toLowerCase()}-sdk.zip`);
+    track("export_sdk", { projectName });
     setLastExportType('sdk');
     setShowExport(true);
     setShowExportMenu(false);
@@ -118,7 +121,6 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     setShowExportMenu(prev => !prev);
   }, []);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
@@ -138,69 +140,69 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleSave, actions, canUndo, canRedo]);
 
+  const ToolbarButton = ({ onClick, disabled, title, children, className = "" }: {
+    onClick?: () => void; disabled?: boolean; title?: string; children: React.ReactNode; className?: string;
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={`p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100/60 disabled:opacity-25 disabled:hover:bg-transparent transition-smooth ${className}`}
+    >
+      {children}
+    </button>
+  );
+
   return (
     <>
-      <style jsx global>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translate(-50%, 10px); }
-          to { opacity: 1; transform: translate(-50%, 0); }
-        }
-        .animate-fade-in { animation: fade-in 0.2s ease-out; }
-        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
-      `}</style>
-
       {/* Desktop Toolbar */}
-      <div className="hidden md:flex h-14 bg-white border-b border-gray-100 items-center justify-between px-4">
+      <div className="hidden md:flex h-12 bg-white/80 backdrop-blur-sm border-b border-gray-100/80 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-lg font-bold text-[#3182F6]">앱인토스</Link>
-          <span className="text-gray-300">|</span>
+          <Link href="/" className="text-base font-bold bg-gradient-to-r from-[#3182F6] to-[#6C5CE7] bg-clip-text text-transparent">
+            앱인토스
+          </Link>
+          <div className="w-px h-4 bg-gray-200" />
           <input
             type="text"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="text-sm text-gray-700 font-medium bg-transparent border-none outline-none w-32 hover:bg-gray-50 px-2 py-1 rounded-lg focus:bg-gray-100"
+            className="text-sm text-gray-700 font-medium bg-transparent border-none outline-none w-32 hover:bg-gray-50/80 px-2 py-1 rounded-lg focus:bg-gray-100/80 transition-smooth"
             placeholder="프로젝트 이름"
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {/* Undo/Redo */}
-          <button 
-            onClick={() => actions.history.undo()} 
-            disabled={!canUndo} 
-            className="p-2 text-sm rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50 transition"
-            title="실행취소 (⌘Z)"
-          >
-            ↩
-          </button>
-          <button 
-            onClick={() => actions.history.redo()} 
-            disabled={!canRedo} 
-            className="p-2 text-sm rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50 transition"
-            title="다시실행 (⌘⇧Z)"
-          >
-            ↪
-          </button>
+        <div className="flex items-center gap-0.5">
+          <ToolbarButton onClick={() => actions.history.undo()} disabled={!canUndo} title="실행취소 (⌘Z)">
+            <Undo2 size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={() => actions.history.redo()} disabled={!canRedo} title="다시실행 (⌘⇧Z)">
+            <Redo2 size={16} />
+          </ToolbarButton>
           
-          <div className="w-px h-6 bg-gray-200 mx-1" />
+          <div className="w-px h-5 bg-gray-200/60 mx-1" />
           
           {/* Viewport Selector */}
           <div className="relative">
             <button 
               onClick={() => setShowViewport(!showViewport)}
-              className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center gap-1.5"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-xl hover:bg-gray-100/60 text-gray-600 transition-smooth font-medium"
             >
-              📱 {viewportWidth}px
+              <Smartphone size={14} />
+              {viewportWidth}px
+              <ChevronDown size={12} className={`transition-transform ${showViewport ? "rotate-180" : ""}`} />
             </button>
             {showViewport && (
-              <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
+              <div className="absolute top-full left-0 mt-1.5 bg-white rounded-xl shadow-lg border border-gray-100/80 py-1 z-50 min-w-[160px] animate-fade-in">
                 {VIEWPORT_SIZES.map((vp) => (
                   <button
                     key={vp.width}
                     onClick={() => { setViewportWidth(vp.width); setShowViewport(false); }}
-                    className={`w-full px-4 py-2 text-sm text-left hover:bg-gray-50 ${viewportWidth === vp.width ? "text-[#3182F6] font-medium" : ""}`}
+                    className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between transition-smooth ${
+                      viewportWidth === vp.width ? "text-[#3182F6] font-medium" : "text-gray-600"
+                    }`}
                   >
-                    {vp.name} ({vp.width}px)
+                    <span>{vp.name}</span>
+                    <span className="text-xs text-gray-400">{vp.width}px</span>
                   </button>
                 ))}
               </div>
@@ -208,71 +210,68 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
           </div>
 
           {/* Dark Mode Toggle */}
-          <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className={`px-3 py-1.5 text-sm rounded-lg border transition ${darkMode ? "bg-gray-800 text-white border-gray-700" : "border-gray-200 hover:bg-gray-50"}`}
-          >
-            {darkMode ? "☀️" : "🌙"}
-          </button>
+          <ToolbarButton onClick={() => setDarkMode(!darkMode)} title={darkMode ? "라이트 모드" : "다크 모드"}>
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </ToolbarButton>
           
           {/* Toss Mode Toggle */}
           <button 
             onClick={() => setTossMode?.(!tossMode)}
-            className={`px-3 py-1.5 text-sm rounded-lg border transition flex items-center gap-1 ${tossMode ? "bg-[#0064FF] text-white border-[#0064FF]" : "border-gray-200 hover:bg-gray-50"}`}
+            className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-xl font-medium transition-smooth ${
+              tossMode 
+                ? "bg-[#3182F6] text-white shadow-sm shadow-blue-200/40" 
+                : "text-gray-500 hover:bg-gray-100/60"
+            }`}
             title="Toss MiniApp 심사 모드"
           >
-            {tossMode ? "✓" : ""} 토스
+            {tossMode && <Check size={12} />}
+            토스
           </button>
           
-          <div className="w-px h-6 bg-gray-200 mx-1" />
+          <div className="w-px h-5 bg-gray-200/60 mx-1" />
           
-          {/* File Operations */}
-          <button 
-            onClick={handleLoad} 
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
-          >
-            📂
-          </button>
-          <button 
-            onClick={handleSave} 
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
-            title="저장 (⌘S)"
-          >
-            💾
-          </button>
-          <button 
-            onClick={() => setShowPreview(true)} 
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
-          >
-            👁
-          </button>
+          <ToolbarButton onClick={handleLoad} title="불러오기">
+            <FolderOpen size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={handleSave} title="저장 (⌘S)">
+            <Save size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={() => { setShowPreview(true); track("preview_opened"); }} title="미리보기">
+            <Eye size={16} />
+          </ToolbarButton>
+          
           <div className="relative">
             <button 
               onClick={handleExport} 
-              className="px-4 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white hover:bg-[#1B64DA] font-medium"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm rounded-xl bg-[#3182F6] text-white hover:bg-[#1B64DA] font-medium transition-smooth shadow-sm shadow-blue-200/40 active:scale-[0.98]"
             >
-              📦 내보내기
+              <Download size={14} />
+              내보내기
             </button>
             {showExportMenu && (
-              <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-56">
+              <div className="absolute top-full right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100/80 py-1.5 z-50 w-56 animate-fade-in">
                 <button
                   onClick={handleExportHTML}
-                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-2"
+                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-3 transition-smooth"
                 >
-                  <span>📄</span>
+                  <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                    <FileCode size={16} className="text-orange-500" />
+                  </div>
                   <div>
-                    <div className="font-medium">HTML 내보내기</div>
-                    <div className="text-xs text-gray-400">미리보기용 · 단일 파일</div>
+                    <div className="font-medium text-gray-900">HTML 내보내기</div>
+                    <div className="text-[11px] text-gray-400">미리보기용 · 단일 파일</div>
                   </div>
                 </button>
                 <button
                   onClick={handleExportSDK}
-                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-2"
+                  className="w-full px-4 py-3 text-sm text-left hover:bg-gray-50 flex items-center gap-3 transition-smooth"
                 >
-                  <span>📦</span>
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <Package size={16} className="text-[#3182F6]" />
+                  </div>
                   <div>
                     <div className="font-medium text-[#3182F6]">앱인토스 SDK</div>
-                    <div className="text-xs text-gray-400">심사 제출용 · React 프로젝트</div>
+                    <div className="text-[11px] text-gray-400">심사 제출용 · React 프로젝트</div>
                   </div>
                 </button>
               </div>
@@ -282,10 +281,10 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
       </div>
 
       {/* Mobile Toolbar */}
-      <div className="flex md:hidden h-12 bg-white border-b border-gray-100 items-center justify-between px-3">
+      <div className="flex md:hidden h-12 bg-white/90 backdrop-blur-sm border-b border-gray-100/80 items-center justify-between px-3">
         <div className="flex items-center gap-2">
           <Link href="/" className="text-base font-bold text-[#3182F6]">앱인토스</Link>
-          <span className="text-gray-300">|</span>
+          <div className="w-px h-4 bg-gray-200" />
           <input
             type="text"
             value={projectName}
@@ -294,42 +293,40 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
             placeholder="이름"
           />
           {tossMode && (
-            <span className="px-1.5 py-0.5 text-xs rounded bg-[#0064FF] text-white font-medium">
+            <span className="px-1.5 py-0.5 text-[10px] rounded-md bg-[#3182F6] text-white font-semibold">
               토스
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {/* Toss Mode Toggle (Mobile) */}
+        <div className="flex items-center gap-1">
           <button 
             onClick={() => setTossMode?.(!tossMode)}
-            className={`p-2 text-base rounded-lg ${tossMode ? "text-[#0064FF]" : "text-gray-400"} active:bg-gray-100`}
+            className={`p-2 rounded-xl transition-smooth ${tossMode ? "text-[#3182F6]" : "text-gray-400"} active:bg-gray-100`}
             title="토스 심사 모드"
           >
-            {tossMode ? "✓T" : "T"}
+            {tossMode ? <Check size={16} /> : <span className="text-xs font-bold">T</span>}
           </button>
-          <button 
-            onClick={handleSave} 
-            className="p-2 text-base rounded-lg active:bg-gray-100"
-            title="저장"
-          >
-            💾
+          <button onClick={handleSave} className="p-2 rounded-xl text-gray-500 active:bg-gray-100 transition-smooth" title="저장">
+            <Save size={16} />
           </button>
           <div className="relative">
             <button 
               onClick={handleExport} 
-              className="px-3 py-1.5 text-sm rounded-lg bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl bg-[#3182F6] text-white active:bg-[#1B64DA] font-medium transition-smooth"
             >
-              📦 내보내기
+              <Download size={13} />
+              내보내기
             </button>
             {showExportMenu && (
-              <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-52">
-                <button onClick={handleExportHTML} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-2">
-                  <span>📄</span><div><div className="font-medium">HTML</div><div className="text-xs text-gray-400">미리보기용</div></div>
+              <div className="absolute top-full right-0 mt-1 bg-white rounded-2xl shadow-xl border border-gray-100/80 py-1 z-50 w-52 animate-fade-in">
+                <button onClick={handleExportHTML} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-3">
+                  <FileCode size={16} className="text-orange-500" />
+                  <div><div className="font-medium">HTML</div><div className="text-[11px] text-gray-400">미리보기용</div></div>
                 </button>
-                <button onClick={handleExportSDK} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-2">
-                  <span>📦</span><div><div className="font-medium text-[#3182F6]">앱인토스 SDK</div><div className="text-xs text-gray-400">심사 제출용</div></div>
+                <button onClick={handleExportSDK} className="w-full px-4 py-3 text-sm text-left active:bg-gray-50 flex items-center gap-3">
+                  <Package size={16} className="text-[#3182F6]" />
+                  <div><div className="font-medium text-[#3182F6]">앱인토스 SDK</div><div className="text-[11px] text-gray-400">심사 제출용</div></div>
                 </button>
               </div>
             )}
@@ -337,12 +334,14 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
         </div>
       </div>
 
-      {/* Preview Modal */}
+      {/* Preview Panel */}
       {showPreview && (
-        <PreviewModal
-          query={query}
+        <PreviewPanel
+          serializedJson={query.serialize()}
           darkMode={darkMode}
           viewportWidth={viewportWidth}
+          projectName={projectName}
+          tossMode={tossMode}
           onClose={() => setShowPreview(false)}
           onToggleDark={() => setDarkMode(!darkMode)}
         />
@@ -350,28 +349,36 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
 
       {/* Export Modal */}
       {showExport && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowExport(false)}>
-          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full mx-4 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowExport(false)}>
+          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full mx-4 animate-slide-up shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="text-center mb-6">
-              <div className="text-5xl mb-3">🎉</div>
+              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <PartyPopper size={32} className="text-green-500" />
+              </div>
               <h3 className="text-xl font-bold mb-2">내보내기 완료!</h3>
               <p className="text-gray-500 text-sm">{lastExportType === 'sdk' ? '앱인토스 SDK 프로젝트가' : 'HTML'} 다운로드되었습니다.</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+            <div className="bg-gray-50 rounded-2xl p-5 mb-6">
               {lastExportType === 'sdk' ? (
                 <>
-                  <h4 className="font-bold text-sm mb-3">📋 SDK 프로젝트 사용법</h4>
+                  <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+                    <Package size={16} className="text-[#3182F6]" />
+                    SDK 프로젝트 사용법
+                  </h4>
                   <ol className="text-sm text-gray-600 space-y-2">
                     <li>1. ZIP 파일 압축 해제</li>
-                    <li>2. <code className="bg-gray-200 px-1 rounded">npm install</code> 실행</li>
-                    <li>3. <code className="bg-gray-200 px-1 rounded">npm run dev</code>로 개발 서버 실행</li>
-                    <li>4. <code className="bg-gray-200 px-1 rounded">npm run build</code>로 빌드</li>
+                    <li>2. <code className="bg-gray-200 px-1.5 py-0.5 rounded-md text-xs">npm install</code> 실행</li>
+                    <li>3. <code className="bg-gray-200 px-1.5 py-0.5 rounded-md text-xs">npm run dev</code>로 개발 서버 실행</li>
+                    <li>4. <code className="bg-gray-200 px-1.5 py-0.5 rounded-md text-xs">npm run build</code>로 빌드</li>
                     <li>5. <a href="https://apps-in-toss.toss.im" className="text-[#3182F6] underline" target="_blank" rel="noopener noreferrer">앱인토스 콘솔</a>에서 심사 제출</li>
                   </ol>
                 </>
               ) : (
                 <>
-                  <h4 className="font-bold text-sm mb-3">📋 앱인토스에 업로드하는 방법</h4>
+                  <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+                    <FileCode size={16} className="text-orange-500" />
+                    앱인토스에 업로드하는 방법
+                  </h4>
                   <ol className="text-sm text-gray-600 space-y-2">
                     <li>1. <a href="https://apps-in-toss.toss.im" className="text-[#3182F6] underline" target="_blank" rel="noopener noreferrer">앱인토스 콘솔</a> 접속</li>
                     <li>2. &apos;새 앱 만들기&apos; 클릭</li>
@@ -382,7 +389,7 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
                 </>
               )}
             </div>
-            <button onClick={() => setShowExport(false)} className="w-full bg-[#3182F6] text-white py-3 rounded-xl font-semibold active:bg-[#1B64DA]">
+            <button onClick={() => setShowExport(false)} className="w-full bg-[#3182F6] text-white py-3 rounded-2xl font-semibold active:bg-[#1B64DA] transition-smooth active:scale-[0.98]">
               확인
             </button>
           </div>
@@ -391,65 +398,3 @@ export const Toolbar = ({ viewportWidth, setViewportWidth, darkMode, setDarkMode
     </>
   );
 };
-
-// Preview Modal Component
-interface PreviewModalProps {
-  query: ReturnType<typeof useEditor>["query"];
-  darkMode: boolean;
-  viewportWidth: number;
-  onClose: () => void;
-  onToggleDark: () => void;
-}
-
-function PreviewModal({ query, darkMode, viewportWidth, onClose, onToggleDark }: PreviewModalProps) {
-  const [previewHtml, setPreviewHtml] = useState("");
-
-  useEffect(() => {
-    const json = query.serialize();
-    const html = generateHTML(json, { darkMode });
-    setPreviewHtml(html);
-  }, [query, darkMode]);
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-gray-100 rounded-3xl p-4 md:p-6 max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold">미리보기</h3>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={onToggleDark} 
-              className={`text-sm px-3 py-1 rounded-lg border ${darkMode ? "bg-gray-800 text-white border-gray-700" : "border-gray-300"}`}
-            >
-              {darkMode ? "☀️ 라이트" : "🌙 다크"}
-            </button>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
-          </div>
-        </div>
-        <div 
-          className="rounded-[2rem] overflow-hidden shadow-2xl border-4 border-gray-800"
-          style={{ width: Math.min(viewportWidth, 375), height: 700 }}
-        >
-          {/* Toss Status Bar */}
-          <div className={`h-11 flex items-center justify-between px-6 text-xs ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}>
-            <span className="font-semibold">9:41</span>
-            <div className="flex gap-1">
-              <span>📶</span><span>🔋</span>
-            </div>
-          </div>
-          {/* Toss Nav */}
-          <div className={`h-11 flex items-center px-4 border-b ${darkMode ? "border-gray-800 bg-gray-900" : "border-gray-100 bg-white"}`}>
-            <span className={`text-sm ${darkMode ? "text-white" : ""}`}>←</span>
-            <span className={`flex-1 text-center text-sm font-medium ${darkMode ? "text-white" : ""}`}>미니앱</span>
-            <span className="text-sm">⋯</span>
-          </div>
-          {/* Content via iframe */}
-          <iframe
-            srcDoc={previewHtml}
-            className="w-full h-[calc(100%-88px)] border-none"
-            title="Preview"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}

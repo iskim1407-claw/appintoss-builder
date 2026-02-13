@@ -1,0 +1,40 @@
+-- 프로젝트
+CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  canvas_data TEXT NOT NULL DEFAULT '',
+  app_info TEXT,
+  thumbnail TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 프로젝트 버전 이력
+CREATE TABLE IF NOT EXISTS project_versions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  version INTEGER NOT NULL,
+  canvas_data TEXT NOT NULL,
+  change_description TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 내보내기 이력
+CREATE TABLE IF NOT EXISTS exports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 제출 이력
+CREATE TABLE IF NOT EXISTS submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  app_name TEXT,
+  status TEXT DEFAULT 'draft',
+  submitted_at DATETIME,
+  result_at DATETIME,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
