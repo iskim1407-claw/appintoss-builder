@@ -28,7 +28,7 @@ import { Canvas } from "@/components/user/Container";
 import { PageTabs } from "@/components/editor/PageTabs";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Link from "next/link";
-import { Rocket, AlertTriangle, Layers, PaintBucket, Settings, Copy, Trash2, ArrowUp, ArrowDown, X, Hand, ImageIcon, Check } from "lucide-react";
+import { Rocket, AlertTriangle, Layers, PaintBucket, Settings, Copy, Trash2, ArrowUp, ArrowDown, X, Hand, ImageIcon, Check, Plus } from "lucide-react";
 // TDS 컴포넌트
 import { NavigationComponent } from "@/components/user/NavigationComponent";
 import { ListRowComponent } from "@/components/user/ListRowComponent";
@@ -51,6 +51,7 @@ import { QuizIntroComponent } from "@/components/user/QuizIntroComponent";
 import { QuizQuestionComponent } from "@/components/user/QuizQuestionComponent";
 import { QuizResultComponent } from "@/components/user/QuizResultComponent";
 
+import { usePageStore } from "@/lib/pageStore";
 import { track } from "@vercel/analytics";
 import { OnboardingGuide } from "@/components/editor/OnboardingGuide";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -215,7 +216,8 @@ class EditorErrorBoundary extends React.Component<
 }
 
 export default function EditorPage() {
-  const [viewportWidth, setViewportWidth] = useState(375);
+  const [viewportWidth, setViewportWidth] = useState(393);
+  const [viewportHeight, setViewportHeight] = useState(852);
   const [darkMode, setDarkMode] = useState(false);
   const [tossMode, setTossMode] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("canvas");
@@ -224,15 +226,20 @@ export default function EditorPage() {
     track("editor_opened");
   }, []);
 
-  // 폰 프레임 드래그 이동
+  // 폰 프레임 드래그 이동 + 줌
   const [framePos, setFramePos] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0, fx: 0, fy: 0 });
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleFrameMouseDown = (e: React.MouseEvent) => {
-    // 프레임 상단 바(베젤) 영역에서만 드래그 시작
+  // 캔버스 배경 또는 폰 베젤 클릭 시 패닝 시작 (Figma처럼)
+  const handleCanvasMouseDown = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest('[data-craft-node]') || target.closest('.craft-renderer')) return;
+    // Craft.js 캔버스 영역 내부면 무시 (컴포넌트 선택/드래그용)
+    if (target.closest('[data-frame-canvas]')) return;
+    // 설정 패널, 컴포넌트 패널 등 다른 UI 요소 무시
+    if (target.closest('button') || target.closest('input') || target.closest('select')) return;
     e.preventDefault();
     setIsDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY, fx: framePos.x, fy: framePos.y };
@@ -252,6 +259,33 @@ export default function EditorPage() {
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
+  // 줌: Ctrl/Cmd + 스크롤 또는 핀치
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        setZoom(z => Math.min(2, Math.max(0.25, z + delta)));
+      }
+    };
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  // 줌 단축키: Cmd/Ctrl + =/-/0
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom(z => Math.min(2, z + 0.1)); }
+      else if (e.key === '-') { e.preventDefault(); setZoom(z => Math.max(0.25, z - 0.1)); }
+      else if (e.key === '0') { e.preventDefault(); setZoom(1); setFramePos({ x: 0, y: 0 }); }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
   // 모바일 터치 드래그 폴리필
   useEffect(() => {
     polyfill({
@@ -267,6 +301,9 @@ export default function EditorPage() {
     <div className="h-screen flex flex-col bg-[#F7F8FA]">
       <Editor resolver={resolver}>
         <div className="flex items-center gap-2 md:gap-3 bg-white/80 backdrop-blur-sm border-b border-gray-100/80 px-3 py-1.5">
+          <Link href="/" className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 transition-smooth active:scale-95 text-gray-500" title="홈으로">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </Link>
           <ProjectManager />
           <div className="ml-auto">
             <Link
@@ -278,7 +315,7 @@ export default function EditorPage() {
             </Link>
           </div>
         </div>
-        <Toolbar viewportWidth={viewportWidth} setViewportWidth={setViewportWidth} darkMode={darkMode} setDarkMode={setDarkMode} tossMode={tossMode} setTossMode={setTossMode} />
+        <Toolbar viewportWidth={viewportWidth} setViewportWidth={setViewportWidth} viewportHeight={viewportHeight} setViewportHeight={setViewportHeight} darkMode={darkMode} setDarkMode={setDarkMode} tossMode={tossMode} setTossMode={setTossMode} />
         <PageTabs />
         <AutoSave />
         <LoadTemplate />
@@ -298,24 +335,40 @@ export default function EditorPage() {
           </div>
 
           {/* Center: Canvas with Frame (always rendered, single instance) */}
-          <div className={`
-            flex-1 overflow-y-auto
-            md:flex md:items-start md:justify-center md:p-8 md:bg-[#F2F4F6]
-            ${mobileTab !== "canvas" ? "hidden md:flex" : "flex flex-col"}
-          `}>
-            {/* Desktop phone frame wrapper — 드래그로 이동 가능 */}
+          <div
+            ref={canvasContainerRef}
+            onMouseDown={handleCanvasMouseDown}
+            className={`
+              flex-1 overflow-hidden relative
+              md:flex md:items-center md:justify-center md:p-8 md:bg-[#F2F4F6]
+              ${mobileTab !== "canvas" ? "hidden md:flex" : "flex flex-col"}
+            `}
+            style={{ cursor: isDragging ? 'grabbing' : 'default' }}
+          >
+            {/* 플로팅 + 버튼 (새 페이지 추가) */}
+            <FloatingAddButton />
+            {/* 줌 컨트롤 UI */}
+            <div className="hidden md:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-30 items-center gap-1 bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-2xl px-2 py-1 shadow-lg shadow-black/5">
+              <button onClick={() => setZoom(z => Math.max(0.25, z - 0.1))} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-600 font-bold text-lg">−</button>
+              <button onClick={() => { setZoom(1); setFramePos({ x: 0, y: 0 }); }} className="px-2 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-xs font-semibold text-gray-600 min-w-[48px]">{Math.round(zoom * 100)}%</button>
+              <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-600 font-bold text-lg">+</button>
+              <div className="w-px h-5 bg-gray-200 mx-0.5" />
+              <button onClick={() => { setZoom(0.5); setFramePos({ x: 0, y: 0 }); }} className="px-2 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-[10px] font-medium text-gray-500">50%</button>
+              <button onClick={() => { setZoom(0.75); setFramePos({ x: 0, y: 0 }); }} className="px-2 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-[10px] font-medium text-gray-500">75%</button>
+              <button onClick={() => { setZoom(1); setFramePos({ x: 0, y: 0 }); }} className="px-2 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-[10px] font-medium text-gray-500">100%</button>
+              <button onClick={() => { setZoom(1.5); setFramePos({ x: 0, y: 0 }); }} className="px-2 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-[10px] font-medium text-gray-500">150%</button>
+            </div>
+            {/* Desktop phone frame wrapper — 드래그로 이동, 줌 가능 */}
             <div
-              className="hidden md:block transition-none"
+              className="hidden md:block transition-none origin-top"
               style={{
                 width: viewportWidth,
-                transform: `translate(${framePos.x}px, ${framePos.y}px)`,
-                cursor: isDragging ? 'grabbing' : 'grab',
+                transform: `translate(${framePos.x}px, ${framePos.y}px) scale(${zoom})`,
                 userSelect: isDragging ? 'none' : 'auto',
               }}
-              onMouseDown={handleFrameMouseDown}
             >
               <div className="bg-gray-800 rounded-t-[2rem] pt-2 px-2">
-                <div className={`rounded-t-[1.5rem] overflow-hidden ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+                <div data-frame-content className={`rounded-t-[1.5rem] overflow-hidden ${darkMode ? "bg-gray-900" : "bg-white"}`}>
                   <div className={`h-11 flex items-center justify-between px-6 text-xs ${darkMode ? "text-white" : ""}`}>
                     <span className="font-semibold">9:41</span>
                     <div className="flex gap-1.5 items-center text-[10px]">
@@ -331,7 +384,7 @@ export default function EditorPage() {
                 </div>
               </div>
               <div className="bg-gray-800 px-2">
-                <div className={`min-h-[500px] ${darkMode ? "bg-gray-900 text-white" : "bg-white"}`}>
+                <div data-frame-content data-frame-canvas className={`overflow-y-auto ${darkMode ? "bg-gray-900 text-white" : "bg-white"}`} style={{ height: viewportHeight - 120 }}>
                   <Frame>
                     <Element is={Canvas} canvas>
                       <HeaderComponent text="환영합니다!" level="h2" />
@@ -341,7 +394,7 @@ export default function EditorPage() {
                 </div>
               </div>
               <div className="bg-gray-800 rounded-b-[2rem] pb-2 px-2">
-                <div className={`rounded-b-[1.5rem] h-8 flex items-center justify-center ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+                <div data-frame-content className={`rounded-b-[1.5rem] h-8 flex items-center justify-center ${darkMode ? "bg-gray-900" : "bg-white"}`}>
                   <div className={`w-32 h-1 rounded-full ${darkMode ? "bg-gray-700" : "bg-gray-300"}`} />
                 </div>
               </div>
@@ -402,6 +455,38 @@ export default function EditorPage() {
       </Editor>
     </div>
     </EditorErrorBoundary>
+  );
+}
+
+// 플로팅 새 페이지 추가 버튼
+function FloatingAddButton() {
+  const { query, actions } = useEditor();
+  const { addPage, currentPageId, updatePageState } = usePageStore();
+
+  const handleAdd = () => {
+    // 현재 상태 저장
+    try {
+      const serialized = query.serialize();
+      if (serialized && serialized !== "{}") {
+        updatePageState(currentPageId, serialized);
+      }
+    } catch {}
+    // 새 페이지 추가
+    const newId = addPage();
+    const newPage = usePageStore.getState().pages.find(p => p.id === newId);
+    if (newPage?.craftState) {
+      try { actions.deserialize(newPage.craftState); } catch {}
+    }
+  };
+
+  return (
+    <button
+      onClick={handleAdd}
+      className="hidden md:flex absolute bottom-4 right-4 z-30 w-12 h-12 rounded-full bg-[#3182F6] text-white items-center justify-center shadow-lg shadow-blue-300/40 hover:bg-[#1B64DA] hover:scale-105 active:scale-95 transition-all"
+      title="새 페이지 추가"
+    >
+      <Plus size={24} strokeWidth={2.5} />
+    </button>
   );
 }
 

@@ -33,7 +33,7 @@ const TEMPLATE_ICONS: Record<string, any> = {
   "fortune-tarot": Sparkles,
 };
 
-const POPULAR_IDS = new Set(["shopping", "event", "mbti-personality-test", "salary-timer", "daily-quiz"]);
+const POPULAR_IDS = new Set(["shopping", "event", "mbti-personality-test", "salary-timer", "daily-quiz", "vote-battle", "ranking-list", "fortune-tarot", "meeting-bingo", "worker-type-test"]);
 
 const CATEGORIES = ["전체", "커머스", "서비스", "마케팅", "퀴즈", "소셜"];
 
@@ -68,7 +68,7 @@ export default function TemplatesPage() {
     <div className="min-h-screen bg-[#F7F8FA]">
       <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-100/60">
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
-          <Link href="/" className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#3182F6] to-[#6C5CE7] bg-clip-text text-transparent">앱인토스 빌더</Link>
+          <Link href="/" className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#3182F6] to-[#6C5CE7] bg-clip-text text-transparent">미니앱 빌더</Link>
           <div className="flex gap-3 md:gap-4 items-center">
             <Link href="/security" className="hidden md:inline-flex text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium items-center gap-1">
               <Lock size={13} /> 보안점검
@@ -105,6 +105,36 @@ export default function TemplatesPage() {
             </button>
           ))}
         </div>
+
+        {/* 🔥 인기 TOP 10 섹션 */}
+        {selectedCategory === "전체" && (
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-4">
+              <Flame size={20} className="text-orange-500" />
+              <h2 className="text-lg md:text-xl font-bold">인기 TOP 10</h2>
+              <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-medium">실시간</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {templates.filter(t => POPULAR_IDS.has(t.id)).slice(0, 10).map((t, idx) => {
+                const IconComp = TEMPLATE_ICONS[t.id] || Flame;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => handleUseTemplate(t.name, t.data)}
+                    className="group relative bg-white rounded-2xl border border-gray-100/60 p-4 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 active:scale-[0.97]"
+                  >
+                    <div className="absolute -top-2 -left-2 w-7 h-7 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-sm">
+                      {idx + 1}
+                    </div>
+                    <IconComp size={28} className="mx-auto text-[#3182F6]/60 group-hover:text-[#3182F6] group-hover:scale-110 transition-all mb-2" />
+                    <div className="text-sm font-semibold truncate">{t.name}</div>
+                    <div className="text-[11px] text-gray-400 mt-0.5">{t.category}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filtered.map((t) => {

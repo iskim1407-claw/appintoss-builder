@@ -4,8 +4,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "앱인토스 빌더 - 코딩 없이 토스 미니앱 만들기",
-  description: "비개발자도 드래그앤드롭으로 토스 미니앱을 만들 수 있는 노코드 빌더",
+  title: "미니앱 빌더 - 코딩 없이 미니앱 만들기",
+  description: "노코드로 토스 미니앱을 만들어보세요. 드래그앤드롭으로 쉽게!",
+  openGraph: {
+    title: "미니앱 빌더 - 코딩 없이 미니앱 만들기",
+    description: "노코드로 토스 미니앱을 만들어보세요. 드래그앤드롭으로 쉽게!",
+  },
 };
 
 export default function RootLayout({

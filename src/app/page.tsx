@@ -20,13 +20,13 @@ const features = [
   },
   {
     icon: Smartphone,
-    title: "토스 네이티브 스타일",
-    desc: "토스 디자인 시스템을 따르는 33종 컴포넌트로 토스 앱처럼 자연스러운 UI를 구현합니다.",
+    title: "미니앱 네이티브 스타일",
+    desc: "토스 미니앱 호환 디자인 시스템을 따르는 33종 컴포넌트로 자연스러운 UI를 구현합니다.",
   },
   {
     icon: CreditCard,
-    title: "토스페이 연동",
-    desc: "버튼 클릭 한 번으로 토스페이 결제를 붙일 수 있어요. 복잡한 결제 연동은 이제 잊으세요.",
+    title: "결제 연동",
+    desc: "버튼 클릭 한 번으로 결제 기능을 붙일 수 있어요. 복잡한 결제 연동은 이제 잊으세요.",
   },
   {
     icon: FileText,
@@ -36,7 +36,7 @@ const features = [
   {
     icon: Eye,
     title: "실시간 미리보기",
-    desc: "편집하면서 바로바로 결과를 확인하세요. 토스 앱 안에서 어떻게 보일지 실시간으로 미리볼 수 있어요.",
+    desc: "편집하면서 바로바로 결과를 확인하세요. 미니앱에서 어떻게 보일지 실시간으로 미리볼 수 있어요.",
   },
   {
     icon: Save,
@@ -115,7 +115,7 @@ const plans = [
       "33종 컴포넌트 사용",
       "무제한 프로젝트",
       "ZIP 내보내기",
-      "토스 bridge API 지원",
+      "미니앱 bridge API 지원",
       "기본 템플릿 5종",
       "심사 자동 체크",
     ],
@@ -156,24 +156,24 @@ const plans = [
 
 const faqs = [
   {
-    q: "앱인토스 빌더로 만든 앱은 정말 토스에 배포할 수 있나요?",
-    a: "네! 앱인토스 빌더로 내보낸 ZIP 파일은 앱인토스 콘솔에 바로 업로드할 수 있습니다. 실제로 월급루팡 계산기, 소비 성향 테스트 등이 빌더로 만들어져 심사를 통과했어요.",
+    q: "미니앱 빌더로 만든 앱은 정말 배포할 수 있나요?",
+    a: "네! 미니앱 빌더로 내보낸 ZIP 파일은 토스 미니앱 콘솔에 바로 업로드할 수 있습니다. 실제로 월급루팡 계산기, 소비 성향 테스트 등이 빌더로 만들어져 심사를 통과했어요.",
   },
   {
     q: "코딩을 전혀 몰라도 사용할 수 있나요?",
-    a: "물론이죠! 앱인토스 빌더는 비개발자를 위해 만들어졌어요. 마우스로 드래그앤드롭만 하면 됩니다. 코드는 저희가 자동으로 생성해드려요.",
+    a: "물론이죠! 미니앱 빌더는 비개발자를 위해 만들어졌어요. 마우스로 드래그앤드롭만 하면 됩니다. 코드는 저희가 자동으로 생성해드려요.",
   },
   {
     q: "심사 제출은 어떻게 하나요?",
     a: "빌더에서 '심사 제출' 버튼을 누르면 자동으로 심사 항목을 체크하고, 통과하면 ZIP 파일을 다운로드할 수 있어요. 제출 가이드도 함께 제공되니 처음이어도 걱정 없어요!",
   },
   {
-    q: "토스페이 결제 연동은 어떻게 하나요?",
-    a: "버튼 컴포넌트를 추가하고, 설정에서 '액션'을 '토스페이 결제'로 선택한 뒤 금액을 입력하면 끝! 실제 결제는 앱인토스 콘솔에서 사업자 인증 후 활성화됩니다.",
+    q: "결제 연동은 어떻게 하나요?",
+    a: "버튼 컴포넌트를 추가하고, 설정에서 '액션'을 '결제'로 선택한 뒤 금액을 입력하면 끝! 실제 결제는 토스 미니앱 콘솔에서 사업자 인증 후 활성화됩니다.",
   },
   {
     q: "만든 앱의 소유권은 누구에게 있나요?",
-    a: "100% 여러분의 것입니다. 앱인토스 빌더는 도구일 뿐, 여러분이 만든 앱에 대한 모든 권리는 여러분에게 있습니다.",
+    a: "100% 여러분의 것입니다. 미니앱 빌더는 도구일 뿐, 여러분이 만든 앱에 대한 모든 권리는 여러분에게 있습니다.",
   },
   {
     q: "무료 플랜에 제한이 있나요?",
@@ -183,13 +183,13 @@ const faqs = [
 
 const testimonials = [
   {
-    text: "개발자 없이 3일 만에 토스 미니앱을 런칭했어요. 믿기 힘들겠지만 사실입니다!",
+    text: "개발자 없이 3일 만에 미니앱을 런칭했어요. 믿기 힘들겠지만 사실입니다!",
     author: "김민수",
     role: "1인 쇼핑몰 운영자",
     initials: "김",
   },
   {
-    text: "외주 맡기면 500만원, 앱인토스 빌더로 직접 만들면 0원. 선택은 뻔하죠.",
+    text: "외주 맡기면 500만원, 미니앱 빌더로 직접 만들면 0원. 선택은 뻔하죠.",
     author: "이지연",
     role: "스타트업 대표",
     initials: "이",
@@ -211,7 +211,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="fixed top-0 w-full glass z-50 border-b border-gray-100/50">
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
-          <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#3182F6] to-[#6C5CE7] bg-clip-text text-transparent">앱인토스 빌더</span>
+          <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#3182F6] to-[#6C5CE7] bg-clip-text text-transparent">미니앱 빌더</span>
           {/* Desktop links */}
           <div className="hidden md:flex gap-5 items-center">
             <Link href="/templates" className="text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium">
@@ -223,9 +223,9 @@ export default function LandingPage() {
             <Link href="/documents" className="text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium flex items-center gap-1">
               <FileCode size={13} /> 문서
             </Link>
-            <a href="#pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium">
+            <Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium">
               요금제
-            </a>
+            </Link>
             <a href="#faq" className="text-sm text-gray-500 hover:text-gray-900 transition-smooth font-medium">
               FAQ
             </a>
@@ -258,9 +258,9 @@ export default function LandingPage() {
               <Link href="/documents" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-gray-700 active:bg-gray-50 transition-smooth">
                 <FileCode size={16} /> 문서
               </Link>
-              <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-gray-700 active:bg-gray-50 transition-smooth">
+              <Link href="/pricing" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-gray-700 active:bg-gray-50 transition-smooth">
                 요금제
-              </a>
+              </Link>
               <a href="#faq" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-gray-700 active:bg-gray-50 transition-smooth">
                 FAQ
               </a>
@@ -282,16 +282,16 @@ export default function LandingPage() {
       <section className="pt-24 md:pt-32 pb-14 md:pb-20 px-5 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-1.5 bg-blue-50 text-[#3182F6] text-sm font-medium px-4 py-1.5 rounded-full mb-5 md:mb-6">
-            <Sparkles size={14} /> 3,000만 토스 유저에게 노출하세요
+            <Sparkles size={14} /> 토스 미니앱 플랫폼용 노코드 빌더
           </div>
           <h1 className="text-[1.65rem] sm:text-3xl md:text-6xl font-bold leading-tight mb-5 md:mb-6">
             코딩 없이{" "}
-            <span className="text-[#3182F6]">토스 미니앱</span>
+            <span className="text-[#3182F6]">미니앱</span>
             <br className="hidden sm:block" />
             {" "}만들고, 심사까지
           </h1>
           <p className="text-base md:text-lg text-gray-500 mb-8 md:mb-10 max-w-2xl mx-auto">
-            드래그앤드롭으로 누구나 쉽게 앱인토스 미니앱을 만들 수 있습니다.
+            드래그앤드롭으로 누구나 쉽게 토스 미니앱 호환 앱을 만들 수 있습니다.
             <br className="hidden md:block" />
             <span className="font-medium text-gray-700">만들고 → 체크하고 → 제출까지 한 번에.</span>
           </p>
@@ -423,7 +423,7 @@ export default function LandingPage() {
               <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4"><FileCode size={24} className="text-green-600" /></div>
               <h3 className="font-bold text-lg mb-2">ZIP 다운로드</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                체크 통과 후 버튼 하나로 심사용 ZIP 파일을 다운로드. 앱인토스 콘솔에 바로 업로드할 수 있어요.
+                체크 통과 후 버튼 하나로 심사용 ZIP 파일을 다운로드. 토스 미니앱 콘솔에 바로 업로드할 수 있어요.
               </p>
             </div>
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover-lift">
@@ -440,8 +440,8 @@ export default function LandingPage() {
       {/* Social Proof - Real Apps */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">실제 토스에서 돌아가는 앱들</h2>
-          <p className="text-gray-500 mb-12">앱인토스 빌더로 만들어서 심사를 통과한 진짜 앱들이에요</p>
+          <h2 className="text-3xl font-bold mb-4">실제 심사를 통과한 앱들</h2>
+          <p className="text-gray-500 mb-12">미니앱 빌더로 만들어서 심사를 통과한 진짜 앱들이에요</p>
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 text-left">
               <div className="flex items-center gap-3 mb-4">
@@ -472,7 +472,7 @@ export default function LandingPage() {
       <section className="py-16 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-3">33종 컴포넌트로 무엇이든</h2>
-          <p className="text-center text-gray-500 mb-10">토스 디자인 시스템을 따르는 컴포넌트로 자연스러운 앱을 만드세요</p>
+          <p className="text-center text-gray-500 mb-10">토스 미니앱 호환 컴포넌트로 자연스러운 앱을 만드세요</p>
           <div className="flex flex-wrap justify-center gap-2 md:gap-3">
             {components.map((c) => (
               <div
@@ -490,9 +490,9 @@ export default function LandingPage() {
       {/* Features */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-4">왜 앱인토스 빌더인가요?</h2>
+          <h2 className="text-3xl font-bold text-center mb-4">왜 미니앱 빌더인가요?</h2>
           <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
-            개발자 없이도 프로페셔널한 토스 미니앱을 만들 수 있는 이유
+            개발자 없이도 프로페셔널한 미니앱을 만들 수 있는 이유
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {features.map((f) => (
@@ -533,7 +533,7 @@ export default function LandingPage() {
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4">실제 사용자 후기</h2>
-          <p className="text-center text-gray-500 mb-12">이미 많은 분들이 앱인토스 빌더로 미니앱을 만들고 있어요</p>
+          <p className="text-center text-gray-500 mb-12">이미 많은 분들이 미니앱 빌더로 미니앱을 만들고 있어요</p>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <div key={i} className="bg-gray-50/80 rounded-2xl p-6 hover-lift border border-gray-100/50">
@@ -634,7 +634,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl font-bold mb-4">지금 바로 시작하세요</h2>
           <p className="text-blue-100 mb-8 text-lg">
-            3,000만 토스 유저에게 당신의 앱을 보여주세요.
+            토스 미니앱 플랫폼에 당신의 앱을 보여주세요.
             <br />
             만들고, 체크하고, 제출까지 — 한 번에 끝.
           </p>
@@ -666,8 +666,8 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <span className="text-lg font-bold text-[#3182F6]">앱인토스 빌더</span>
-              <p className="text-sm text-gray-500 mt-1">토스 미니앱을 쉽게 만드세요</p>
+              <span className="text-lg font-bold text-[#3182F6]">미니앱 빌더</span>
+              <p className="text-sm text-gray-500 mt-1">미니앱을 쉽게 만드세요</p>
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
               <Link href="/templates" className="hover:text-gray-900">템플릿</Link>
@@ -681,13 +681,14 @@ export default function LandingPage() {
           </div>
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-400">
-              앱인토스 빌더로 만든 앱에는 &quot;Powered by 앱인토스 빌더&quot; 뱃지가 포함됩니다.
+              미니앱 빌더로 만든 앱에는 &quot;Powered by 미니앱 빌더&quot; 뱃지가 포함됩니다.
               <br />
               프로 플랜에서 워터마크를 제거할 수 있어요.
             </p>
           </div>
           <div className="mt-6 pt-6 border-t border-gray-100 text-center text-sm text-gray-400">
-            © 2024 앱인토스 빌더. 토스 미니앱을 쉽게 만드세요.
+            <p>© 2024 미니앱 빌더. 미니앱을 쉽게 만드세요.</p>
+            <p className="mt-2 text-xs text-gray-300">본 서비스는 (주)비바리퍼블리카(토스)와 무관한 독립 서비스입니다.</p>
           </div>
         </div>
       </footer>

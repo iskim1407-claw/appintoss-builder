@@ -22,6 +22,7 @@ const defaultAppInfo: AppInfo = {
   subtitle: '',
   category: '',
   description: '',
+  detailedDescription: '',
   keywords: [],
   email: '',
   ageRating: '전체',

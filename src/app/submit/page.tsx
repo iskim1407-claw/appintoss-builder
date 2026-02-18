@@ -8,6 +8,7 @@ import { validateAppInfo } from "@/lib/validation";
 import { AppInfoForm } from "./components/AppInfoForm";
 import { ValidationPanel } from "./components/ValidationPanel";
 import SubmitGuide from "./components/SubmitGuide";
+import DownloadPackage from "./components/DownloadPackage";
 
 const STEPS = [
   { num: 1, label: "앱 정보" },
@@ -78,7 +79,7 @@ export default function SubmitPage() {
           <Link href="/editor" className="text-sm text-gray-500 hover:text-gray-700 transition flex items-center gap-1">
             ← 에디터로 돌아가기
           </Link>
-          <h1 className="text-base font-bold text-gray-900">앱인토스 제출하기</h1>
+          <h1 className="text-base font-bold text-gray-900">미니앱 제출하기</h1>
           <div className="w-20" />
         </div>
       </div>
@@ -105,15 +106,10 @@ export default function SubmitPage() {
           </div>
         )}
 
-        {/* Step 3: 다운로드 (placeholder) */}
+        {/* Step 3: 다운로드 */}
         {currentStep === 3 && (
-          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-12 shadow-sm border border-gray-100 text-center">
-            <div className="text-5xl mb-4"></div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">제출 패키지 다운로드</h2>
-            <p className="text-gray-500 text-sm mb-6">이 단계는 곧 구현됩니다</p>
-            <button disabled className="px-8 py-3 bg-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
-              다운로드 (준비중)
-            </button>
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <DownloadPackage />
           </div>
         )}
 

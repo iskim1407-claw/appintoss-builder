@@ -93,6 +93,50 @@ export function checkRequiredFields(appInfo: AppInfo): ValidationItem {
   };
 }
 
+/** 상세 설명 검증 (2026-02-10 신규 필드) */
+export function checkDetailedDescription(appInfo: AppInfo): ValidationItem {
+  if (!appInfo.detailedDescription || appInfo.detailedDescription.trim().length < 20) {
+    return {
+      id: 'REC-003',
+      name: '상세 설명',
+      status: 'warning',
+      message: '상세 설명이 비어있거나 너무 짧습니다.',
+      fix: '"서비스 접속 → 행동 → 결과" 흐름을 구체적으로 작성하면 AI 마케팅 소재 자동생성에 활용됩니다.',
+    };
+  }
+
+  return {
+    id: 'REC-003',
+    name: '상세 설명',
+    status: 'pass',
+    message: '상세 설명 작성 완료',
+  };
+}
+
+/** AI 활용 법 준수 고지 안내 (2026-01-23 인공지능기본법) */
+export function checkAiDisclosure(appInfo: AppInfo): ValidationItem {
+  const aiKeywords = ['ai', 'AI', '인공지능', 'gpt', 'GPT', '생성형', 'llm', 'LLM', 'chatbot', '챗봇'];
+  const text = `${appInfo.name} ${appInfo.description} ${appInfo.detailedDescription || ''}`;
+  const usesAi = aiKeywords.some((kw) => text.includes(kw));
+
+  if (!usesAi) {
+    return {
+      id: 'REC-004',
+      name: 'AI 고지 의무',
+      status: 'pass',
+      message: 'AI 활용 미해당 (자동 감지)',
+    };
+  }
+
+  return {
+    id: 'REC-004',
+    name: 'AI 고지 의무',
+    status: 'warning',
+    message: 'AI 활용 미니앱으로 감지됨 — 인공지능기본법에 따라 AI 사용 사전고지 및 결과물 표시 의무가 있습니다.',
+    fix: '앱 내에 "이 서비스는 AI를 활용합니다" 고지문구와 AI 생성 콘텐츠 라벨을 추가하세요.',
+  };
+}
+
 /** 개인정보처리방침 링크 검증 */
 export function checkPrivacyPolicy(appInfo: AppInfo): ValidationItem {
   if (!appInfo.privacyPolicyUrl) {

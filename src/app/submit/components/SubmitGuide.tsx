@@ -173,7 +173,7 @@ granite deploy`;
 
   return (
     <div className="max-w-2xl mx-auto space-y-3 p-4">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">앱인토스 제출 가이드</h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-4">미니앱 제출 가이드</h2>
       <p className="text-sm text-gray-500 mb-6">
         아래 단계를 순서대로 따라하세요. 완료한 단계는 체크 표시해 두면 진행 상황을 확인할 수 있습니다.
       </p>
@@ -187,7 +187,7 @@ granite deploy`;
             에 접속합니다.
           </li>
           <li><strong>사업자 등록</strong> 또는 <strong>개인 가입</strong>을 진행합니다.</li>
-          <li>좌측 메뉴에서 <strong>&quot;앱인토스&quot;</strong>를 클릭합니다.</li>
+          <li>좌측 메뉴에서 <strong>&quot;미니앱&quot;</strong>를 클릭합니다.</li>
         </ol>
       </Step>
 

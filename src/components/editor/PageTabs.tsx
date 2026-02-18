@@ -134,7 +134,7 @@ export function PageTabs() {
   }, [saveCurrentState]);
 
   return (
-    <div className="flex items-center bg-white border-b border-gray-100 px-2 h-9 gap-1 overflow-hidden">
+    <div className="flex items-center bg-white border-b border-gray-100 px-2 h-11 gap-1 overflow-hidden">
       {/* 탭 스크롤 영역 */}
       <div ref={scrollRef} className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide flex-1 min-w-0">
         {pages.map((page, idx) => {
@@ -204,10 +204,10 @@ export function PageTabs() {
       {/* 페이지 추가 버튼 */}
       <button
         onClick={handleAdd}
-        className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition text-sm"
+        className="shrink-0 h-8 px-3 rounded-lg flex items-center justify-center gap-1 text-gray-500 hover:bg-[#3182F6]/10 hover:text-[#3182F6] transition text-xs font-medium border border-dashed border-gray-300 hover:border-[#3182F6]"
         title="페이지 추가"
       >
-        +
+        + 새 페이지
       </button>
     </div>
   );

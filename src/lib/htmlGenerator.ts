@@ -1997,7 +1997,7 @@ function showResultByScore(scoreMapping) {
 `;
 
 export function generateHTML(json: string, options: GenerateOptions = {}): string {
-  const { darkMode = false, projectName = '앱인토스 미니앱', tossMode = false } = options;
+  const { darkMode = false, projectName = '미니앱', tossMode = false } = options;
   
   let nodes: NodesMap;
   try {
@@ -2057,12 +2057,12 @@ export function generateHTML(json: string, options: GenerateOptions = {}): strin
   
   <div class="toast-container"></div>
   
-  <!-- Powered by 앱인토스 빌더 -->
+  <!-- Powered by 미니앱 빌더 -->
   <a href="https://appintoss-builder.vercel.app" target="_blank" 
      style="position:fixed;bottom:8px;right:8px;background:#3182F6;color:white;
             padding:4px 8px;border-radius:12px;font-size:11px;text-decoration:none;
             opacity:0.7;z-index:9999;">
-    ⚡ 앱인토스 빌더로 제작
+    ⚡ 미니앱 빌더로 제작
   </a>
   
   <script>
@@ -2076,7 +2076,7 @@ export function generateHTML(json: string, options: GenerateOptions = {}): strin
 
 // 다중 페이지용 HTML 생성
 export function generateMultiPageHTML(pages: Array<{ id: string; name: string; json: string }>, options: GenerateOptions = {}): string {
-  const { darkMode = false, projectName = '앱인토스 미니앱', tossMode = false } = options;
+  const { darkMode = false, projectName = '미니앱', tossMode = false } = options;
   
   // 각 페이지의 콘텐츠를 미리 렌더링
   const pagesContent = pages.map(page => {
@@ -2147,12 +2147,12 @@ export function generateMultiPageHTML(pages: Array<{ id: string; name: string; j
   
   <div class="toast-container"></div>
   
-  <!-- Powered by 앱인토스 빌더 -->
+  <!-- Powered by 미니앱 빌더 -->
   <a href="https://appintoss-builder.vercel.app" target="_blank" 
      style="position:fixed;bottom:8px;right:8px;background:#3182F6;color:white;
             padding:4px 8px;border-radius:12px;font-size:11px;text-decoration:none;
             opacity:0.7;z-index:9999;">
-    ⚡ 앱인토스 빌더로 제작
+    ⚡ 미니앱 빌더로 제작
   </a>
   
   <script>

@@ -51,7 +51,7 @@ export function checkBannedCategory(appInfo: AppInfo): ValidationItem {
       name: '금지 카테고리 체크',
       status: 'fail',
       message: `허용되지 않는 카테고리: ${category}`,
-      fix: '가상자산, 사행성, 데이팅 카테고리는 앱인토스에서 허용되지 않습니다.',
+      fix: '가상자산, 사행성, 데이팅 카테고리는 미니앱 플랫폼에서 허용되지 않습니다.',
     };
   }
 

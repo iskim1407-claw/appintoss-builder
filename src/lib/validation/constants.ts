@@ -3,10 +3,10 @@ export const BANNED_KEYWORDS: string[] = [
   'toss',
   '토스',
   'apps-in-toss',
-  '앱인토스',
+  '미니앱',
 ];
 
-/** 앱인토스에서 허용하지 않는 카테고리 */
+/** 미니앱 플랫폼에서 허용하지 않는 카테고리 */
 export const BANNED_CATEGORIES: string[] = [
   '가상자산',
   '사행성',

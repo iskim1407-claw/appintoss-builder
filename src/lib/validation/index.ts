@@ -1,6 +1,6 @@
 import type { AppInfo, ValidationResult, ValidationItem } from '@/types/submit';
 import { checkBannedKeywords, checkBannedCategory } from './rules/keywords';
-import { checkAppName, checkSubtitle, checkRequiredFields, checkPrivacyPolicy } from './rules/metadata';
+import { checkAppName, checkSubtitle, checkRequiredFields, checkPrivacyPolicy, checkDetailedDescription, checkAiDisclosure } from './rules/metadata';
 
 /**
  * 앱 정보 전체 검증
@@ -22,6 +22,8 @@ export function validateAppInfo(appInfo: AppInfo): ValidationResult {
   // 권장 검증
   const recItems = [
     checkPrivacyPolicy(appInfo),
+    checkDetailedDescription(appInfo),
+    checkAiDisclosure(appInfo),
   ];
   recItems.forEach((item) => { item.category = 'recommended'; });
   items.push(...recItems);
@@ -48,4 +50,4 @@ export function validateAppInfo(appInfo: AppInfo): ValidationResult {
 }
 
 export { checkBannedKeywords, checkBannedCategory } from './rules/keywords';
-export { checkAppName, checkSubtitle, checkRequiredFields, checkPrivacyPolicy } from './rules/metadata';
+export { checkAppName, checkSubtitle, checkRequiredFields, checkPrivacyPolicy, checkDetailedDescription, checkAiDisclosure } from './rules/metadata';

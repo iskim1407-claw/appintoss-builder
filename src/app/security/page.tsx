@@ -513,7 +513,7 @@ export default function SecurityPage() {
       content += `
 ---
 
-> 이 리포트는 앱인토스 빌더 보안 점검 도구로 생성되었습니다.
+> 이 리포트는 미니앱 빌더 보안 점검 도구로 생성되었습니다.
 > 실제 토스 심사와 다를 수 있으며, 전문 보안 검토를 권장합니다.
 `;
     } else {
@@ -566,7 +566,7 @@ export default function SecurityPage() {
 
       content += `
 ========================================
-앱인토스 빌더 보안 점검 도구
+미니앱 빌더 보안 점검 도구
 실제 토스 심사와 다를 수 있습니다.
 ========================================
 `;
@@ -590,7 +590,7 @@ export default function SecurityPage() {
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-[#3182F6]">
-            앱인토스 빌더
+            미니앱 빌더
           </Link>
           <div className="flex gap-4 items-center">
             <Link
@@ -747,7 +747,7 @@ export default function SecurityPage() {
       {/* Footer */}
       <footer className="py-8 px-6 border-t border-gray-100 bg-white">
         <div className="max-w-6xl mx-auto text-center text-sm text-gray-400">
-          © 2024 앱인토스 빌더. 보안 점검 결과는 참고용이며, 실제 심사와 다를
+          © 2024 미니앱 빌더. 보안 점검 결과는 참고용이며, 실제 심사와 다를
           수 있습니다.
         </div>
       </footer>

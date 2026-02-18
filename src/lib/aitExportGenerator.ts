@@ -1,6 +1,6 @@
 /**
- * 앱인토스 SDK 프로젝트 Export Generator
- * Craft.js serialized JSON → 앱인토스 SDK 프로젝트 파일들 생성
+ * 미니앱 SDK 프로젝트 Export Generator
+ * Craft.js serialized JSON → 미니앱 SDK 프로젝트 파일들 생성
  */
 
 interface NodeData {
@@ -360,7 +360,7 @@ function genPackageJson(appName: string, projectName: string): string {
   return JSON.stringify({
     name: appName,
     version: '1.0.0',
-    description: `${projectName} - 앱인토스 미니앱`,
+    description: `${projectName} - 미니앱`,
     private: true,
     type: 'module',
     scripts: {
@@ -505,7 +505,7 @@ function genPoweredByBadge(): string {
         zIndex: 9999,
       }}
     >
-      ⚡ 앱인토스 빌더로 제작
+      ⚡ 미니앱 빌더로 제작
     </a>
   );
 }`;
@@ -540,7 +540,7 @@ export default App;
 }
 
 function genAppCss(): string {
-  return `/* 앱인토스 미니앱 스타일 */
+  return `/* 미니앱 스타일 */
 :root {
   --toss-blue: #3182F6;
   --toss-blue-hover: #1B64DA;
@@ -606,7 +606,7 @@ input:focus {
 function genReadme(projectName: string, appName: string): string {
   return `# ${projectName}
 
-앱인토스 빌더로 제작된 미니앱 프로젝트입니다.
+미니앱 빌더로 제작된 미니앱 프로젝트입니다.
 
 ## 🚀 시작하기
 
@@ -632,10 +632,10 @@ npm run build
 
 \`dist/\` 폴더에 빌드 결과물이 생성됩니다.
 
-## 앱인토스 배포
+## 미니앱 배포
 
 1. \`npm run build\` 실행
-2. [앱인토스 콘솔](https://apps-in-toss.toss.im) 접속
+2. [토스 미니앱 콘솔](https://apps-in-toss.toss.im) 접속
 3. '새 앱 만들기' → '파일 업로드'
 4. \`dist/\` 폴더의 파일들 업로드
 5. 앱 정보 입력 후 심사 제출
@@ -645,7 +645,7 @@ npm run build
 - **React** - UI 라이브러리
 - **TypeScript** - 타입 안전성
 - **Vite** - 빌드 도구
-- **@apps-in-toss/web-framework** - 앱인토스 SDK
+- **@apps-in-toss/web-framework** - 미니앱 SDK
 - **@toss/tds-mobile** - 토스 디자인 시스템
 
 ## 📁 프로젝트 구조
@@ -654,7 +654,7 @@ npm run build
 ${appName}/
 ├── index.html          # Vite 엔트리
 ├── package.json
-├── granite.config.ts   # 앱인토스 설정
+├── granite.config.ts   # 미니앱 설정
 ├── vite.config.ts
 ├── tsconfig.json
 └── src/
@@ -664,8 +664,24 @@ ${appName}/
 \`\`\`
 
 ---
-앱인토스 빌더로 제작됨
+미니앱 빌더로 제작됨
 `;
+}
+
+// ── 앱 아이콘 SVG 생성 (첫 글자 기반) ──
+
+function genAppIconSvg(projectName: string): string {
+  const firstChar = projectName.trim().charAt(0) || 'A';
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" style="stop-color:#3182F6"/>
+      <stop offset="100%" style="stop-color:#6C5CE7"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <text x="256" y="280" font-family="'Apple SD Gothic Neo', 'Pretendard', sans-serif" font-size="240" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="central">${firstChar}</text>
+</svg>`;
 }
 
 // ── 메인 Export 함수 ──
@@ -687,6 +703,7 @@ export function generateAitProject(json: string, projectName: string): AitExport
     'src/main.tsx': genMainTsx(),
     'src/App.tsx': genAppTsx(json),
     'src/App.css': genAppCss(),
+    'public/icon.svg': genAppIconSvg(projectName),
     'README.md': genReadme(projectName, appName),
   };
 }

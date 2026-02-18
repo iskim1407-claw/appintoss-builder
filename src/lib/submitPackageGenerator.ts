@@ -32,7 +32,7 @@ function genSubmitPackageJson(appId: string, projectName: string): string {
   return JSON.stringify({
     name: appId,
     version: '1.0.0',
-    description: `${projectName} - 앱인토스 미니앱`,
+    description: `${projectName} - 미니앱`,
     private: true,
     type: 'module',
     scripts: {
@@ -92,7 +92,7 @@ function PrivacyPolicy() {
       <section style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '8px' }}>2. 수집하는 개인정보 항목</h2>
         <p style={{ fontSize: '14px', color: '#6B7684', lineHeight: 1.6 }}>
-          본 앱은 별도의 개인정보를 수집하지 않습니다. 앱인토스 플랫폼에서 제공하는 사용자 식별 정보만을 활용합니다.
+          본 앱은 별도의 개인정보를 수집하지 않습니다. 토스 미니앱 플랫폼에서 제공하는 사용자 식별 정보만을 활용합니다.
         </p>
       </section>
 
@@ -164,7 +164,7 @@ function genSubmitReadme(appInfo: AppInfo, projectName: string): string {
   const appId = appInfo.appName || toEnglishName(projectName);
   return `# ${projectName}
 
-앱인토스 빌더로 제작된 미니앱 프로젝트입니다.
+미니앱 빌더로 제작된 미니앱 프로젝트입니다.
 
 ## 앱 정보
 
@@ -213,7 +213,7 @@ ${appId}/
 \`\`\`
 
 ---
-*앱인토스 빌더로 자동 생성됨*
+*미니앱 빌더로 자동 생성됨*
 `;
 }
 

@@ -434,9 +434,40 @@ export const ComponentPanel = ({ isMobile = false, onComponentAdded }: Component
 
       <div className="p-3 border-t border-gray-100/60">
         <p className="text-[11px] text-gray-400 font-medium">
-          드래그 또는 클릭으로 추가
+          🖱️ 드래그 또는 클릭으로 추가
         </p>
       </div>
+      {/* Drag feedback styles */}
+      <style jsx global>{`
+        [draggable="true"]:active {
+          opacity: 0.7;
+          transform: scale(0.95);
+          transition: all 0.1s ease;
+        }
+        .craftjs-renderer [data-craft-node-id] {
+          position: relative;
+        }
+        .craftjs-renderer [data-craft-node-id]::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border: 2px dashed transparent;
+          border-radius: 8px;
+          pointer-events: none;
+          transition: border-color 0.2s ease;
+          z-index: 10;
+        }
+        .craftjs-renderer [data-craft-node-id].craft-indicator-top::before {
+          border-top-color: #3182F6;
+          border-top-style: solid;
+          border-top-width: 3px;
+        }
+        .craftjs-renderer [data-craft-node-id].craft-indicator-bottom::before {
+          border-bottom-color: #3182F6;
+          border-bottom-style: solid;
+          border-bottom-width: 3px;
+        }
+      `}</style>
     </div>
   );
 };

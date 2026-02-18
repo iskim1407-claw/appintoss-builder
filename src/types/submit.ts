@@ -7,6 +7,7 @@ export interface AppInfo {
   subtitle: string;       // 부제 (20자 제한)
   category: string;       // 카테고리
   description: string;    // 설명
+  detailedDescription: string; // 상세 설명 (서비스 접속→행동→결과 흐름, AI 마케팅 소재 자동생성에 활용)
   keywords: string[];     // 검색 키워드
   email: string;          // 연락처 이메일
   contactEmail?: string;  // alias for email (validation compat)

@@ -37,8 +37,11 @@ export function PreviewPanel({
   const [refreshKey, setRefreshKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Generate HTML whenever inputs change
+  const [isRendering, setIsRendering] = useState(false);
+
+  // Debounced real-time rendering — updates within 150ms of changes
   const regenerate = useCallback(() => {
+    setIsRendering(true);
     try {
       const html = generateHTML(serializedJson, {
         darkMode,
@@ -51,10 +54,12 @@ export function PreviewPanel({
         "<!DOCTYPE html><html><body><p style='padding:24px;font-family:sans-serif;color:#999'>미리보기를 생성할 수 없습니다.</p></body></html>"
       );
     }
+    setTimeout(() => setIsRendering(false), 100);
   }, [serializedJson, darkMode, projectName, tossMode]);
 
   useEffect(() => {
-    regenerate();
+    const timer = setTimeout(regenerate, 150);
+    return () => clearTimeout(timer);
   }, [regenerate]);
 
   const handleRefresh = () => {
@@ -82,8 +87,14 @@ export function PreviewPanel({
       >
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-3 md:mb-4 gap-2 flex-wrap">
-          <h3 className="font-bold text-sm md:text-base text-gray-800">
+          <h3 className="font-bold text-sm md:text-base text-gray-800 flex items-center gap-2">
             👁 미리보기
+            {isRendering && (
+              <span className="inline-flex items-center gap-1 text-[11px] text-blue-500 font-medium">
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+                렌더링 중
+              </span>
+            )}
           </h3>
 
           <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">

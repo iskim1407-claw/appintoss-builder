@@ -3,6 +3,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useSubmitStore } from "@/stores/submitStore";
 import { CATEGORIES, AGE_RATINGS } from "@/types/submit";
+import { AiFillSection } from "./AiFillSection";
 
 function toAppName(english: string): string {
   return english
@@ -59,6 +60,8 @@ export function AppInfoForm() {
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-bold text-gray-900">앱 정보 입력</h2>
+
+      <AiFillSection />
 
       {/* 앱 이름 (한글) */}
       <div>
@@ -135,6 +138,22 @@ export function AppInfoForm() {
           value={appInfo.description}
           onChange={(e) => setAppInfo({ description: e.target.value })}
         />
+      </div>
+
+      {/* 상세 설명 (2026-02-10 신규) */}
+      <div>
+        <label className={labelClass}>
+          상세 설명 <span className="text-xs text-gray-400 font-normal">(NEW)</span>
+        </label>
+        <textarea
+          className={`${inputClass} min-h-[120px] resize-y`}
+          placeholder={"사용자가 앱에 접속한 뒤 핵심 기능을 경험하기까지의 흐름을 작성하세요.\n예: 앱 접속 → 카테고리 선택 → 결과 확인 → 저장/공유"}
+          value={appInfo.detailedDescription}
+          onChange={(e) => setAppInfo({ detailedDescription: e.target.value })}
+        />
+        <p className="text-xs text-gray-400 mt-1">
+          AI가 이 내용을 기반으로 토스 홈 광고 등 마케팅 소재를 자동 생성합니다. 구체적일수록 좋아요.
+        </p>
       </div>
 
       {/* 검색 키워드 (태그) */}
