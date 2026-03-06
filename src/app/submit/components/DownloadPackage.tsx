@@ -148,11 +148,11 @@ export default function DownloadPackage({ logoBase64 }: DownloadPackageProps) {
               <p className="mt-3 text-gray-400"># 2. 의존성 설치</p>
               <p className="text-green-400">npm install</p>
               <p className="mt-3 text-gray-400"># 3. Granite 로그인 (토스앱 QR 스캔)</p>
-              <p className="text-green-400">npx granite login</p>
+              <p className="text-green-400">npx ait login</p>
               <p className="mt-3 text-gray-400"># 4. 빌드</p>
-              <p className="text-green-400">granite build</p>
+              <p className="text-green-400">ait build</p>
               <p className="mt-3 text-gray-400"># 5. 배포</p>
-              <p className="text-green-400">granite deploy</p>
+              <p className="text-green-400">ait deploy</p>
             </div>
           )}
         </div>

@@ -167,9 +167,9 @@ export default function SubmitGuide({ metadata: propsMeta }: SubmitGuideProps) {
 
   const terminalCommands = `cd [다운로드 폴더]/my-app
 npm install
-npx granite login
-granite build
-granite deploy`;
+npx ait login
+ait build
+ait deploy`;
 
   return (
     <div className="max-w-2xl mx-auto space-y-3 p-4">

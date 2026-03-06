@@ -39,18 +39,18 @@ function genSubmitPackageJson(appId: string, projectName: string): string {
       dev: 'vite',
       build: 'tsc && vite build',
       preview: 'vite preview',
-      'granite:build': 'granite build',
-      'granite:deploy': 'granite deploy',
+      'ait:build': 'ait build',
+      'ait:deploy': 'ait deploy',
     },
     dependencies: {
-      '@apps-in-toss/web-framework': '^1.0.0',
+      '@apps-in-toss/web-framework': '^2.0.1',
       '@toss/tds-mobile': '^1.0.0',
-      react: '^18.2.0',
-      'react-dom': '^18.2.0',
+      react: '^19.2.3',
+      'react-dom': '^19.2.3',
     },
     devDependencies: {
-      '@types/react': '^18.2.0',
-      '@types/react-dom': '^18.2.0',
+      '@types/react': '^19.2.3',
+      '@types/react-dom': '^19.2.3',
       '@vitejs/plugin-react': '^4.2.0',
       typescript: '^5.3.0',
       vite: '^5.0.0',
@@ -184,14 +184,14 @@ npm install
 # 2. (선택) 로컬 개발
 npm run dev
 
-# 3. Granite 로그인 - 토스앱 QR 스캔
-npx granite login
+# 3. AIT 로그인 - 토스앱 QR 스캔
+npx ait login
 
-# 4. 빌드
-granite build
+# 4. 빌드 (SDK 2.0.1+)
+ait build
 
 # 5. 배포
-granite deploy
+ait deploy
 \`\`\`
 
 ## 📁 프로젝트 구조

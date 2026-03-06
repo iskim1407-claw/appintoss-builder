@@ -55,6 +55,8 @@ import { usePageStore } from "@/lib/pageStore";
 import { track } from "@vercel/analytics";
 import { OnboardingGuide } from "@/components/editor/OnboardingGuide";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { AIChatPanel } from "@/components/editor/AIChatPanel";
+import { ExportReviewModal } from "@/components/editor/ExportReviewModal";
 
 const AutoSave = () => {
   useAutoSave();
@@ -221,6 +223,7 @@ export default function EditorPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [tossMode, setTossMode] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("canvas");
+  const [showExportModal, setShowExportModal] = useState(false);
 
   useEffect(() => {
     track("editor_opened");
@@ -305,14 +308,14 @@ export default function EditorPage() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </Link>
           <ProjectManager />
-          <div className="ml-auto">
-            <Link
-              href="/submit"
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => setShowExportModal(true)}
               className="inline-flex items-center gap-1.5 px-3 md:px-4 py-2 min-h-[44px] bg-[#3182F6] text-white rounded-xl text-sm font-medium hover:bg-[#1B64DA] transition-smooth active:scale-[0.98] shadow-sm shadow-blue-200/40"
             >
               <Rocket size={14} />
-              <span className="hidden sm:inline">제출하기</span>
-            </Link>
+              <span className="hidden sm:inline">내보내기</span>
+            </button>
           </div>
         </div>
         <Toolbar viewportWidth={viewportWidth} setViewportWidth={setViewportWidth} viewportHeight={viewportHeight} setViewportHeight={setViewportHeight} darkMode={darkMode} setDarkMode={setDarkMode} tossMode={tossMode} setTossMode={setTossMode} />
@@ -324,6 +327,8 @@ export default function EditorPage() {
         <SelectionHighlightStyles />
         <OnboardingGuide />
         <FloatingToolbar />
+        <AIChatPanel />
+        <ExportReviewModal isOpen={showExportModal} onClose={() => setShowExportModal(false)} />
         
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel: Desktop always visible, Mobile only when tab selected */}
