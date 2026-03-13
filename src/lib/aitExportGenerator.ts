@@ -369,7 +369,7 @@ function genPackageJson(appName: string, projectName: string): string {
       preview: 'vite preview',
     },
     dependencies: {
-      '@apps-in-toss/web-framework': '^2.0.4',
+      '@apps-in-toss/web-framework': '^2.0.5',
       '@toss/tds-mobile': '^1.0.0',
       react: '^19.2.3',
       'react-dom': '^19.2.3',

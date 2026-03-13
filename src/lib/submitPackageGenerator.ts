@@ -43,7 +43,7 @@ function genSubmitPackageJson(appId: string, projectName: string): string {
       'ait:deploy': 'ait deploy',
     },
     dependencies: {
-      '@apps-in-toss/web-framework': '^2.0.4',
+      '@apps-in-toss/web-framework': '^2.0.5',
       '@toss/tds-mobile': '^1.0.0',
       react: '^19.2.3',
       'react-dom': '^19.2.3',
@@ -187,7 +187,7 @@ npm run dev
 # 3. AIT 로그인 - 토스앱 QR 스캔
 npx ait login
 
-# 4. 빌드 (SDK 2.0.4+)
+# 4. 빌드 (SDK 2.0.5+)
 ait build
 
 # 5. 배포
